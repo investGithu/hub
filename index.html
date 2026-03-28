@@ -11,16 +11,16 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg); color: #333; padding-bottom: 90px; overflow-x: hidden; }
 
-        /* TOAST */
+        /* NOTIFICAÇÃO TOAST */
         #toast { 
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
             background: rgba(0,0,0,0.9); color: white; padding: 12px 25px; border-radius: 50px; 
-            font-size: 13px; font-weight: 600; z-index: 10000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 13px; font-weight: 600; z-index: 10000; transition: 0.4s;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; opacity: 0;
         }
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* AUTH */
+        /* TELA DE AUTENTICAÇÃO */
         #authPage { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #002d5a 0%, var(--ch-blue) 100%); padding: 20px; }
         .auth-card { background: white; padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
         .tab-btn { flex: 1; padding: 12px; border: none; background: none; font-weight: 800; color: #bbb; cursor: pointer; }
@@ -28,11 +28,16 @@
         .btn-main { width: 100%; padding: 15px; background: var(--ch-blue); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: 0.3s; }
         input, select { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 12px; outline: none; font-size: 14px; }
 
-        /* APP */
+        /* APP PRINCIPAL */
         #mainApp { display: none; }
         .header-dash { background: var(--ch-blue); color: white; padding: 30px 20px 60px; border-radius: 0 0 30px 30px; text-align: center; }
-        .balance-card { background: white; padding: 25px; border-radius: 20px; text-align: center; margin: -50px 15px 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .balance-card { background: white; padding: 25px; border-radius: 20px; text-align: center; margin: -50px 15px 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .balance-amount { font-size: 28px; font-weight: 900; color: var(--success); }
+
+        .ticker-container { background: #fff; border-bottom: 1px solid #eee; overflow: hidden; white-space: nowrap; padding: 10px 0; margin-bottom: 15px; }
+        .ticker-text { display: inline-block; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 11px; font-weight: 700; color: var(--ch-blue); text-transform: uppercase; }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+        .ticker-text span { margin-right: 60px; }
 
         .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
         .vip-card { background: white; border-radius: 15px; padding: 15px; text-align: center; border: 1px solid #eee; position: relative; }
@@ -40,16 +45,15 @@
 
         /* MODAIS */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 85vh; overflow-y: auto; }
-        .hist-item { background: #f8f9fa; padding: 12px; border-radius: 12px; margin-top: 10px; border-left: 5px solid orange; font-size: 12px; }
+        .modal-content { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 85vh; overflow-y: auto; text-align: center; }
+        .hist-item { background: #f8f9fa; padding: 12px; border-radius: 12px; margin-top: 10px; border-left: 5px solid orange; font-size: 12px; text-align: left; }
 
-        /* NAV */
+        /* NAVEGAÇÃO */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: white; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #a0aec0; font-size: 10px; font-weight: 800; flex: 1; cursor: pointer; }
         .nav-item.active { color: var(--ch-blue); }
         .page { display: none; }
         .active-page { display: block; }
-        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -63,7 +67,7 @@
                 <button class="tab-btn active" id="btnT1" onclick="setAuth('login')">ENTRAR</button>
                 <button class="tab-btn" id="btnT2" onclick="setAuth('reg')">REGISTAR</button>
             </div>
-            <input type="number" id="uTel" placeholder="Telemóvel (ex: 943...)">
+            <input type="number" id="uTel" placeholder="Telemóvel">
             <input type="password" id="uPass" placeholder="Palavra-passe">
             <div id="divRef" class="hidden">
                 <input type="number" id="uRef" placeholder="ID de Convite (Opcional)">
@@ -82,6 +86,12 @@
                 <p style="font-size:11px; font-weight:bold; color:#888;">SALDO DISPONÍVEL (AOA)</p>
                 <div class="balance-amount" id="mainSaldo">0,00 Kz</div>
             </div>
+            <div class="ticker-container">
+                <div class="ticker-text">
+                    <span>🛢️ BEM-VINDO À CHEVRON ANGOLA.</span>
+                    <span>✅ RENDIMENTOS CREDITADOS ÀS 00H00.</span>
+                </div>
+            </div>
             <div class="vip-grid" id="vipGrid"></div>
         </div>
 
@@ -89,32 +99,43 @@
             <div style="padding:20px;">
                 <h3 style="color:var(--ch-blue); margin-bottom:15px;">📊 Meus Rendimentos</h3>
                 <div id="listAssets"></div>
-                <h3 style="color:var(--ch-blue); margin: 25px 0 10px;">🎯 Missão Diária</h3>
-                <div id="listMissions"></div>
             </div>
         </div>
 
         <div id="p-profile" class="page">
             <div style="padding:20px;">
-                <button class="btn-main" onclick="openM('recharge')">💰 RECARREGAR</button>
-                <button class="btn-main" onclick="openM('withdraw')">💸 LEVANTAMENTO</button>
-                <button class="btn-main" onclick="copiarLink()">🔗 COPIAR LINK DE CONVITE</button>
+                <button class="btn-main" style="background:white; color:#333; border:1px solid #eee; margin-bottom:12px;" onclick="openM('recharge')">💰 RECARREGAR</button>
+                <button class="btn-main" style="background:white; color:#333; border:1px solid #eee; margin-bottom:12px;" onclick="openM('withdraw')">💸 LEVANTAMENTO</button>
+                <button class="btn-main" style="background:var(--ch-blue);" onclick="copiarLink()">🔗 LINK DE CONVITE</button>
                 <button class="btn-main" style="background:var(--ch-red); margin-top:30px;" onclick="location.reload()">SAIR</button>
             </div>
         </div>
 
         <nav class="bottom-nav">
             <div class="nav-item active" onclick="nav('home', this)"><span>🏠</span>INÍCIO</div>
-            <div class="nav-item" onclick="nav('assets', this)"><span>🎯</span>MISSÕES</div>
+            <div class="nav-item" onclick="nav('assets', this)"><span>📊</span>ATIVOS</div>
             <div class="nav-item" onclick="nav('profile', this)"><span>👤</span>PERFIL</div>
         </nav>
     </div>
+
+    <div id="m-withdraw" class="modal"><div class="modal-content">
+        <h3>Solicitar Saque</h3>
+        <input type="text" id="wIban" placeholder="IBAN (AO06...)">
+        <input type="number" id="wVal" placeholder="Valor (Min 1.500)">
+        <button class="btn-main" style="background:var(--success)" onclick="execSacar()">SACAR AGORA</button>
+        <div style="margin-top:20px; text-align:left;">
+            <h4 style="font-size:12px; color:#666; border-bottom:1px solid #eee; padding-bottom:5px;">HISTÓRICO:</h4>
+            <div id="histS" style="max-height:180px; overflow-y:auto; margin-top:10px;"></div>
+        </div>
+        <button class="btn-main" style="background:#888; margin-top:10px;" onclick="closeM()">VOLTAR</button>
+    </div></div>
 
     <div id="m-recharge" class="modal"><div class="modal-content">
         <h3>Recarregar Conta</h3>
         <select id="selBanco">
             <option value="ViaExpress">VIA EXPRESS: 921 054 122</option>
             <option value="BFA">BFA: 0006 0000 2870 9134 3015 1</option>
+            <option value="BAI">BAI: 0040 0000 0927 0667 1014 1</option>
         </select>
         <input type="number" id="vRec" placeholder="Valor (Kz)">
         <input type="file" id="fInp" accept="image/*">
@@ -123,7 +144,6 @@
     </div></div>
 
     <script>
-        // CONFIGURAÇÃO FIREBASE (A tua chave)
         const firebaseConfig = {
             apiKey: "AIzaSyC3SurEz7aLcHG4yBUq5zrGBPOb2mvLpZ4",
             authDomain: "fir-6e9ec.firebaseapp.com",
@@ -133,128 +153,145 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let meuTel = "";
-        let authMode = "login";
-        let saldo = 0;
-        let ativos = [];
-
+        let meuTel = "", authMode = "login", saldo = 0, ativos = [];
         const vips = [
-            { n: "VIP 1", p: 12400, l: 520.8 }, { n: "VIP 2", p: 45000, l: 1890 },
-            { n: "VIP 3", p: 100000, l: 4200 }, { n: "VIP 4", p: 250000, l: 10500 },
-            { n: "VIP 5", p: 500000, l: 21000 }, { n: "VIP 6", p: 1000000, l: 42000 }
+            { n: "VIP 1", p: 12400, l: 520.80 }, { n: "VIP 2", p: 45000, l: 1890.00 },
+            { n: "VIP 3", p: 100000, l: 4200.00 }, { n: "VIP 4", p: 250000, l: 10500.00 },
+            { n: "VIP 5", p: 500000, l: 21000.00 }, { n: "VIP 6", p: 1000000, l: 42000.00 }
         ];
 
         function notify(msg) {
             const t = document.getElementById('toast');
-            t.querySelector('span').innerText = msg; t.classList.add('show');
+            t.querySelector('span').innerText = msg;
+            t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // LÓGICA DE LOGIN E REGISTO COM FIREBASE
+        // --- AUTH ---
         function handleAuth() {
             const tel = document.getElementById('uTel').value.trim();
             const pass = document.getElementById('uPass').value.trim();
-            const ref = document.getElementById('uRef').value.trim();
-
             if(!tel || !pass) return notify("⚠️ Preencha os campos!");
-
-            if(authMode === "reg") {
-                db.ref('contas/' + tel).once('value').then(snap => {
-                    if(snap.exists()) return notify("❌ Número já cadastrado!");
-                    
-                    db.ref('contas/' + tel).set({
-                        senha: pass,
-                        saldo: 1000, // Bónus inicial
-                        padrinho: ref || "direto",
-                        ativos: []
-                    }).then(() => {
-                        notify("✅ Conta Criada! Faça Login.");
-                        setAuth('login');
-                    });
-                });
-            } else {
-                db.ref('contas/' + tel).once('value').then(snap => {
-                    const user = snap.val();
-                    if(user && user.senha === pass) {
-                        meuTel = tel;
-                        entrarNoApp();
-                    } else { notify("❌ Dados incorretos!"); }
-                });
-            }
+            db.ref('contas/'+tel).once('value', s => {
+                if(authMode === "reg") {
+                    if(s.exists()) return notify("❌ Existe!");
+                    db.ref('contas/'+tel).set({ senha: pass, saldo: 1000, ativos: [] }).then(() => setAuth('login'));
+                } else {
+                    const u = s.val();
+                    if(u && u.senha === pass) { meuTel = tel; entrarApp(); } 
+                    else notify("❌ Incorreto!");
+                }
+            });
         }
 
-        function entrarNoApp() {
-            // Monitorar saldo e dados em tempo real da nuvem
-            db.ref('contas/' + meuTel).on('value', snap => {
-                const user = snap.val();
-                saldo = parseFloat(user.saldo || 0);
-                ativos = user.ativos || [];
-                updateUI();
+        function entrarApp() {
+            db.ref('contas/'+meuTel).on('value', s => {
+                const u = s.val();
+                saldo = u.saldo || 0;
+                ativos = u.ativos || [];
+                document.getElementById('mainSaldo').innerText = saldo.toLocaleString('pt-AO') + " Kz";
                 document.getElementById('uID').innerText = "+244 " + meuTel;
+                processarRendimentosDiarios();
             });
             document.getElementById('authPage').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             renderVips();
         }
 
+        // --- LÓGICA 00H00 ---
+        function processarRendimentosDiarios() {
+            if (ativos.length === 0) return;
+            const hoje = new Date(); hoje.setHours(0,0,0,0);
+            const hojeTs = hoje.getTime();
+            let ganhoTotal = 0, mudou = false;
+
+            const novos = ativos.map(a => {
+                let last = a.ultimaColeta || a.dataAtiv;
+                if (last < hojeTs) {
+                    const dias = Math.max(1, Math.floor((hojeTs - last) / 86400000));
+                    ganhoTotal += (a.l * dias);
+                    a.ultimaColeta = hojeTs;
+                    mudou = true;
+                }
+                return a;
+            });
+            if (mudou) db.ref('contas/'+meuTel).update({ saldo: saldo + ganhoTotal, ativos: novos });
+        }
+
+        // --- RECARGA (RESTAURADA) ---
+        function confirmarRecarga() {
+            const v = document.getElementById('vRec').value;
+            const f = document.getElementById('fInp').files[0];
+            if(!v || !f) return notify("⚠️ Preencha tudo!");
+            const r = new FileReader();
+            r.onload = e => {
+                db.ref('pendencias/recargas/'+Date.now()).set({ tel: meuTel, valor: parseFloat(v), foto: e.target.result })
+                .then(() => { notify("📩 Enviado!"); closeM(); });
+            };
+            r.readAsDataURL(f);
+        }
+
+        // --- SAQUE (RESTAURADA) ---
+        function execSacar() {
+            const v = parseFloat(document.getElementById('wVal').value);
+            const ib = document.getElementById('wIban').value.trim();
+            if(v < 1500 || v > saldo || !ib) return notify("❌ Inválido!");
+            const idS = Date.now();
+            const dados = { tel: meuTel, valorBruto: v, valor: v*0.9, iban: ib, status: "Pendente", data: new Date().toLocaleString() };
+            db.ref('contas/'+meuTel+'/saldo').set(saldo - v);
+            db.ref('pendencias/saques/'+idS).set(dados);
+            db.ref('contas/'+meuTel+'/historico_saques/'+idS).set(dados).then(() => {
+                notify("💸 Sucesso!"); renderHistSaques();
+            });
+        }
+
+        function renderHistSaques() {
+            db.ref('contas/'+meuTel+'/historico_saques').on('value', snap => {
+                const div = document.getElementById('histS');
+                const d = snap.val();
+                if(!d) return div.innerHTML = "<p style='font-size:10px;'>Sem registos.</p>";
+                div.innerHTML = Object.values(d).reverse().map(s => `
+                    <div class="hist-item" style="border-left-color:${s.status==='Pendente'?'orange':'green'}">
+                        <strong>${s.valorBruto} Kz</strong> - <small>${s.status}</small><br>
+                        <span style="font-size:9px;">${s.data}</span>
+                    </div>`).join('');
+            });
+        }
+
+        // --- COMPRA ---
         function comprar(i) {
             if(saldo >= vips[i].p) {
-                const novoSaldo = saldo - vips[i].p;
-                ativos.push({ ...vips[i], data: new Date().getTime() });
-                
-                // Atualiza o usuário
-                db.ref('contas/' + meuTel).update({
-                    saldo: novoSaldo,
-                    ativos: ativos
-                });
-
-                // Bónus para quem convidou
-                db.ref('contas/' + meuTel + '/padrinho').once('value').then(pSnap => {
-                    let pad = pSnap.val();
-                    if(pad && pad !== "direto") {
-                        db.ref('contas/' + pad + '/saldo').once('value').then(sSnap => {
-                            let sPad = parseFloat(sSnap.val() || 0);
-                            db.ref('contas/' + pad + '/saldo').set(sPad + (vips[i].p * 0.10));
-                        });
-                    }
-                });
-                notify("✅ VIP Ativado!");
-            } else { notify("❌ Saldo insuficiente!"); }
+                const hoje = new Date(); hoje.setHours(0,0,0,0);
+                ativos.push({ ...vips[i], dataAtiv: Date.now(), ultimaColeta: hoje.getTime() });
+                db.ref('contas/'+meuTel).update({ saldo: saldo - vips[i].p, ativos: ativos });
+                notify("✅ Ativado!");
+            } else notify("❌ Saldo!");
         }
 
-        function confirmarRecarga() {
-            const val = document.getElementById('vRec').value;
-            const file = document.getElementById('fInp').files[0];
-            if(!val || !file) return notify("⚠️ Preencha tudo!");
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const idRecarga = Date.now();
-                db.ref('pendencias/recargas/' + idRecarga).set({
-                    tel: meuTel,
-                    valor: parseFloat(val),
-                    foto: e.target.result
-                }).then(() => {
-                    notify("📩 Comprovativo enviado!");
-                    closeM();
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Funções de Interface (Mantidas do original mas adaptadas)
         function renderVips() {
             document.getElementById('vipGrid').innerHTML = vips.map((v, i) => `
                 <div class="vip-card">
                     <div class="vip-badge">${v.n}</div>
-                    <strong>Custo: ${v.p.toLocaleString()} Kz</strong>
-                    <p style="font-size:11px; color:var(--success);">Ganha ${v.l.toLocaleString()} / dia</p>
-                    <button class="btn-main" style="padding:8px" onclick="comprar(${i})">ATIVAR</button>
+                    <strong>${v.p.toLocaleString()} Kz</strong>
+                    <div style="background:#f0f7ff; padding:5px; border-radius:8px; margin:10px 0;">
+                        <span style="color:green; font-weight:bold;">${v.l} Kz/dia</span>
+                    </div>
+                    <button class="btn-main" style="padding:10px; font-size:11px;" onclick="comprar(${i})">ATIVAR</button>
                 </div>`).join('');
         }
 
-        function updateUI() { 
-            document.getElementById('mainSaldo').innerText = saldo.toLocaleString('pt-AO') + " Kz"; 
+        function renderAssets() {
+            document.getElementById('listAssets').innerHTML = ativos.map(a => `
+                <div class="hist-item" style="border-left-color:green">
+                    <strong>${a.n}</strong><br>Recebe ${a.l} Kz diariamente às 00h00.
+                </div>`).join('') || "Sem ativos.";
+        }
+
+        function nav(p, e) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active-page'));
+            e.classList.add('active'); document.getElementById('p-' + p).classList.add('active-page');
+            if(p === 'assets') renderAssets();
         }
 
         function setAuth(m) {
@@ -262,21 +299,16 @@
             document.getElementById('btnT1').classList.toggle('active', m==='login');
             document.getElementById('btnT2').classList.toggle('active', m==='reg');
             document.getElementById('divRef').classList.toggle('hidden', m==='login');
-            document.getElementById('btnAction').innerText = m==='login' ? "ENTRAR AGORA" : "CRIAR CONTA";
         }
 
-        function nav(p, e) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active-page'));
-            e.classList.add('active'); document.getElementById('p-' + p).classList.add('active-page');
+        function openM(id) { 
+            document.getElementById('m-' + id).style.display = 'flex'; 
+            if(id === 'withdraw') renderHistSaques();
         }
-
-        function openM(id) { document.getElementById('m-' + id).style.display = 'flex'; }
         function closeM() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-        
         function copiarLink() {
-            const link = window.location.origin + window.location.pathname + "?ref=" + meuTel;
-            navigator.clipboard.writeText(link).then(() => notify("🔗 Link copiado!"));
+            navigator.clipboard.writeText(window.location.href + "?ref=" + meuTel);
+            notify("🔗 Copiado!");
         }
     </script>
 </body>
