@@ -1,315 +1,259 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt-AO">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chevron VIP | Angola Corporate</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SafeKwanza | Investimento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <style>
-        :root { --ch-blue: #0054a6; --ch-red: #ed1c24; --success: #28a745; --bg: #f4f7f6; --dark: #1a1a1b; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--bg); color: #333; padding-bottom: 90px; overflow-x: hidden; }
-
-        /* NOTIFICAÇÃO TOAST */
-        #toast { 
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
-            background: rgba(0,0,0,0.9); color: white; padding: 12px 25px; border-radius: 50px; 
-            font-size: 13px; font-weight: 600; z-index: 10000; transition: 0.4s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; opacity: 0;
-        }
-        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-        /* TELA DE AUTENTICAÇÃO */
-        #authPage { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #002d5a 0%, var(--ch-blue) 100%); padding: 20px; }
-        .auth-card { background: white; padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: none; font-weight: 800; color: #bbb; cursor: pointer; }
-        .tab-btn.active { color: var(--ch-blue); border-bottom: 3px solid var(--ch-blue); }
-        .btn-main { width: 100%; padding: 15px; background: var(--ch-blue); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        input, select { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 12px; outline: none; font-size: 14px; }
-
-        /* APP PRINCIPAL */
-        #mainApp { display: none; }
-        .header-dash { background: var(--ch-blue); color: white; padding: 30px 20px 60px; border-radius: 0 0 30px 30px; text-align: center; }
-        .balance-card { background: white; padding: 25px; border-radius: 20px; text-align: center; margin: -50px 15px 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .balance-amount { font-size: 28px; font-weight: 900; color: var(--success); }
-
-        .ticker-container { background: #fff; border-bottom: 1px solid #eee; overflow: hidden; white-space: nowrap; padding: 10px 0; margin-bottom: 15px; }
-        .ticker-text { display: inline-block; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 11px; font-weight: 700; color: var(--ch-blue); text-transform: uppercase; }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-        .ticker-text span { margin-right: 60px; }
-
-        .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
-        .vip-card { background: white; border-radius: 15px; padding: 15px; text-align: center; border: 1px solid #eee; position: relative; }
-        .vip-badge { position: absolute; top: 0; left: 0; background: var(--ch-red); color: white; font-size: 10px; padding: 4px 10px; border-radius: 0 0 10px 0; font-weight: bold; }
-
-        /* MODAIS */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 85vh; overflow-y: auto; text-align: center; }
-        .hist-item { background: #f8f9fa; padding: 12px; border-radius: 12px; margin-top: 10px; border-left: 5px solid orange; font-size: 12px; text-align: left; }
-
-        /* NAVEGAÇÃO */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: white; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #a0aec0; font-size: 10px; font-weight: 800; flex: 1; cursor: pointer; }
-        .nav-item.active { color: var(--ch-blue); }
-        .page { display: none; }
-        .active-page { display: block; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #fff; color: #000; -webkit-tap-highlight-color: transparent; }
+        .page { display: none; min-height: 100vh; }
+        .page.active { display: flex; flex-direction: column; }
+        .font-black-italic { font-weight: 900; font-style: italic; }
+        #drawer { transform: translateX(-100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 3000; }
+        #drawer.open { transform: translateX(0); }
+        #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 2500; }
+        #toast { visibility: hidden; min-width: 280px; background: #000; color: #fff; text-align: center; border-radius: 20px; padding: 18px; position: fixed; z-index: 5000; left: 50%; top: 25px; transform: translateX(-50%); border: 2px solid #0052FF; font-weight: 800; }
+        #toast.show { visibility: visible; animation: slideIn 0.4s forwards, slideOut 0.4s 2.6s forwards; }
+        @keyframes slideIn { from { top: -100px; opacity: 0; } to { top: 25px; opacity: 1; } }
+        @keyframes slideOut { from { top: 25px; opacity: 1; } to { top: -100px; opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div id="toast">🔔 <span>Mensagem</span></div>
+    <div id="toast">Notificação</div>
+    <div id="overlay" onclick="toggleMenu()"></div>
 
-    <div id="authPage">
-        <div class="auth-card">
-            <h2 style="color:var(--ch-blue); margin-bottom:20px;">CHEVRON VIP</h2>
-            <div style="display:flex; margin-bottom:20px; border-bottom:1px solid #eee;">
-                <button class="tab-btn active" id="btnT1" onclick="setAuth('login')">ENTRAR</button>
-                <button class="tab-btn" id="btnT2" onclick="setAuth('reg')">REGISTAR</button>
+    <div id="authPage" class="page active items-center justify-center p-6 bg-slate-50">
+        <div class="w-full max-w-sm bg-white p-10 rounded-[45px] shadow-2xl border border-slate-100 text-center">
+            <h1 class="text-4xl font-black-italic italic tracking-tighter uppercase mb-2">SAFE<span class="text-[#0052FF]">KWANZA</span></h1>
+            <p class="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400 italic mb-10">Angola Digital Assets</p>
+            <div class="flex mb-8 bg-slate-100 p-1.5 rounded-2xl">
+                <button id="tabL" onclick="switchAuth('login')" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all bg-white shadow-sm text-[#0052FF]">Entrar</button>
+                <button id="tabR" onclick="switchAuth('reg')" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all text-slate-400">Registo</button>
             </div>
-            <input type="number" id="uTel" placeholder="Telemóvel">
-            <input type="password" id="uPass" placeholder="Palavra-passe">
-            <div id="divRef" class="hidden">
-                <input type="number" id="uRef" placeholder="ID de Convite (Opcional)">
+            <div class="space-y-4">
+                <input type="tel" id="uPhone" placeholder="Terminal (9xxxxxxxx)" class="w-full p-5 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-[#0052FF] outline-none font-bold">
+                <input type="password" id="uPass" placeholder="Senha" class="w-full p-5 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-[#0052FF] outline-none font-bold">
+                <button onclick="handleAuth()" class="w-full bg-black text-white p-5 rounded-3xl font-black uppercase text-[11px] italic">Aceder Carteira</button>
             </div>
-            <button class="btn-main" id="btnAction" onclick="handleAuth()">ENTRAR AGORA</button>
         </div>
     </div>
 
-    <div id="mainApp">
-        <div id="p-home" class="page active-page">
-            <div class="header-dash">
-                <p style="font-size:10px; opacity:0.8;">ANGOLA CORPORATE UNIT</p>
-                <strong id="uID">---</strong>
+    <div id="dashPage" class="page">
+        <div id="drawer" class="fixed top-0 left-0 h-full w-72 bg-black text-white p-10 flex flex-col">
+            <h2 class="text-2xl font-black-italic text-[#0052FF] mb-12 italic tracking-tighter">MENU</h2>
+            <nav class="flex-1 space-y-7">
+                <button onclick="nav('vips')" class="block font-black text-xs uppercase italic">Mineração VIP</button>
+                <button onclick="nav('recharge')" class="block font-black text-xs uppercase italic text-emerald-400">Recarregar</button>
+                <button onclick="nav('withdraw')" class="block font-black text-xs uppercase italic text-red-400">Sacar Lucros</button>
+                <button onclick="nav('team')" class="block font-black text-xs uppercase italic text-amber-400">Afiliados (10%)</button>
+                <button onclick="nav('history')" class="block font-black text-xs uppercase italic text-blue-400">Histórico</button>
+            </nav>
+            <button onclick="logout()" class="w-full bg-red-600 p-5 rounded-2xl font-black text-[10px] uppercase italic">Sair</button>
+        </div>
+
+        <header class="bg-black p-12 pt-16 text-center border-b-[10px] border-[#0052FF] relative">
+            <button onclick="toggleMenu()" class="absolute top-8 left-8 text-white bg-white/10 p-3 rounded-xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <p class="text-[#0052FF] text-[10px] font-black uppercase tracking-[0.5em] mb-4 italic">Balanço Acumulado</p>
+            <h3 class="text-5xl font-black-italic text-white italic tracking-tighter"><span id="balanceDisp">0,00</span> <span class="text-xl text-blue-600">Kz</span></h3>
+            <div id="miningBadge" class="hidden mt-8 bg-emerald-500/10 border border-emerald-500/30 px-5 py-2.5 rounded-full inline-flex items-center gap-3">
+                <span id="activeVipLabel" class="text-emerald-400 font-black text-[9px] uppercase italic"></span>
             </div>
-            <div class="balance-card">
-                <p style="font-size:11px; font-weight:bold; color:#888;">SALDO DISPONÍVEL (AOA)</p>
-                <div class="balance-amount" id="mainSaldo">0,00 Kz</div>
-            </div>
-            <div class="ticker-container">
-                <div class="ticker-text">
-                    <span>🛢️ BEM-VINDO À CHEVRON ANGOLA.</span>
-                    <span>✅ RENDIMENTOS CREDITADOS ÀS 00H00.</span>
+        </header>
+
+        <main class="p-6 pb-28 max-w-lg mx-auto w-full flex-1">
+            <div id="vipsSect" class="space-y-4"><div id="vipGrid" class="space-y-4"></div></div>
+            
+            <div id="rechargeSect" class="hidden">
+                <div class="bg-white border-4 border-black p-8 rounded-[40px] text-center">
+                    <h2 class="font-black italic text-2xl mb-6 uppercase">Recarga</h2>
+                    <select id="bankChoice" onchange="updateBank()" class="w-full p-5 bg-slate-50 border-2 rounded-2xl font-black text-xs mb-4 outline-none">
+                        <option value="">BANCO...</option><option value="BAI">BAI</option><option value="BFA">BFA</option>
+                    </select>
+                    <div id="bankDetails" class="hidden mb-6 p-6 bg-slate-900 rounded-3xl text-blue-400 text-[11px] font-mono italic text-left">
+                        IBAN:<br><span id="ibanVal" class="text-white font-black text-sm block mt-2"></span>
+                    </div>
+                    <input type="number" id="depAmount" placeholder="Valor (Kz)" class="w-full p-5 border-2 rounded-2xl font-black mb-4 outline-none">
+                    <p class="text-[9px] font-black text-slate-400 mb-2 uppercase italic">Anexar Comprovativo (Foto):</p>
+                    <input type="file" id="depFile" accept="image/*" class="text-[10px] mb-8 block w-full">
+                    <button onclick="handleDeposit()" class="w-full bg-[#0052FF] text-white p-6 rounded-3xl font-black uppercase text-[11px] italic">Confirmar Depósito</button>
                 </div>
             </div>
-            <div class="vip-grid" id="vipGrid"></div>
-        </div>
 
-        <div id="p-assets" class="page">
-            <div style="padding:20px;">
-                <h3 style="color:var(--ch-blue); margin-bottom:15px;">📊 Meus Rendimentos</h3>
-                <div id="listAssets"></div>
+            <div id="withdrawSect" class="hidden">
+                <div class="bg-white border-4 border-black p-8 rounded-[40px] text-center">
+                    <h2 class="font-black italic text-2xl text-red-600 mb-6 uppercase">Saque</h2>
+                    <input type="text" id="wIban" placeholder="IBAN (21 dígitos)" maxlength="25" class="w-full p-5 bg-slate-50 border-2 rounded-2xl font-black mb-4 font-mono text-xs outline-none">
+                    <input type="number" id="wAmount" oninput="calcW()" placeholder="Valor (Mín. 1.500 Kz)" class="w-full p-5 bg-slate-50 border-2 rounded-2xl font-black mb-4 outline-none">
+                    <div id="feeBox" class="p-5 bg-red-50 rounded-3xl border border-red-100 hidden mb-6 text-[10px] font-black uppercase">
+                        <div class="flex justify-between"><span>Taxa (10%):</span><span id="taxVal">0 Kz</span></div>
+                        <div class="flex justify-between mt-2 text-[12px]"><span>Receberá:</span><span class="text-emerald-600" id="finalVal">0 Kz</span></div>
+                    </div>
+                    <button onclick="handleWithdraw()" class="w-full bg-black text-white p-6 rounded-3xl font-black uppercase text-[11px] italic">Sacar Agora</button>
+                </div>
             </div>
-        </div>
 
-        <div id="p-profile" class="page">
-            <div style="padding:20px;">
-                <button class="btn-main" style="background:white; color:#333; border:1px solid #eee; margin-bottom:12px;" onclick="openM('recharge')">💰 RECARREGAR</button>
-                <button class="btn-main" style="background:white; color:#333; border:1px solid #eee; margin-bottom:12px;" onclick="openM('withdraw')">💸 LEVANTAMENTO</button>
-                <button class="btn-main" style="background:var(--ch-blue);" onclick="copiarLink()">🔗 LINK DE CONVITE</button>
-                <button class="btn-main" style="background:var(--ch-red); margin-top:30px;" onclick="location.reload()">SAIR</button>
+            <div id="teamSect" class="hidden">
+                <div class="bg-black p-10 rounded-[45px] text-white text-center shadow-2xl border-b-8 border-[#0052FF]">
+                    <h2 class="text-2xl font-black-italic text-[#0052FF] mb-4 uppercase italic tracking-tighter">CONVITES</h2>
+                    <div class="bg-white/10 p-5 rounded-2xl border border-white/20 mb-6">
+                        <p id="refLinkText" class="text-[10px] font-black text-blue-400 break-all"></p>
+                    </div>
+                    <button onclick="copyRefLink()" class="w-full bg-[#0052FF] text-white py-5 rounded-3xl font-black uppercase text-[11px] italic">Copiar Link</button>
+                </div>
             </div>
-        </div>
 
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="nav('home', this)"><span>🏠</span>INÍCIO</div>
-            <div class="nav-item" onclick="nav('assets', this)"><span>📊</span>ATIVOS</div>
-            <div class="nav-item" onclick="nav('profile', this)"><span>👤</span>PERFIL</div>
-        </nav>
+            <div id="historySect" class="hidden space-y-3"><div id="historyList" class="space-y-3"></div></div>
+        </main>
     </div>
-
-    <div id="m-withdraw" class="modal"><div class="modal-content">
-        <h3>Solicitar Saque</h3>
-        <input type="text" id="wIban" placeholder="IBAN (AO06...)">
-        <input type="number" id="wVal" placeholder="Valor (Min 1.500)">
-        <button class="btn-main" style="background:var(--success)" onclick="execSacar()">SACAR AGORA</button>
-        <div style="margin-top:20px; text-align:left;">
-            <h4 style="font-size:12px; color:#666; border-bottom:1px solid #eee; padding-bottom:5px;">HISTÓRICO:</h4>
-            <div id="histS" style="max-height:180px; overflow-y:auto; margin-top:10px;"></div>
-        </div>
-        <button class="btn-main" style="background:#888; margin-top:10px;" onclick="closeM()">VOLTAR</button>
-    </div></div>
-
-    <div id="m-recharge" class="modal"><div class="modal-content">
-        <h3>Recarregar Conta</h3>
-        <select id="selBanco">
-            <option value="ViaExpress">VIA EXPRESS: 921 054 122</option>
-            <option value="BFA">BFA: 0006 0000 2870 9134 3015 1</option>
-            <option value="BAI">BAI: 0040 0000 0927 0667 1014 1</option>
-        </select>
-        <input type="number" id="vRec" placeholder="Valor (Kz)">
-        <input type="file" id="fInp" accept="image/*">
-        <button class="btn-main" onclick="confirmarRecarga()">ENVIAR COMPROVATIVO</button>
-        <button class="btn-main" style="background:#888" onclick="closeM()">FECHAR</button>
-    </div></div>
 
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyC3SurEz7aLcHG4yBUq5zrGBPOb2mvLpZ4",
             authDomain: "fir-6e9ec.firebaseapp.com",
             databaseURL: "https://fir-6e9ec-default-rtdb.firebaseio.com",
-            projectId: "fir-6e9ec"
+            projectId: "fir-6e9ec",
+            storageBucket: "fir-6e9ec.firebasestorage.app",
+            messagingSenderId: "579697818964",
+            appId: "1:579697818964:web:aad151fcbe3989df431cc1"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let meuTel = "", authMode = "login", saldo = 0, ativos = [];
-        const vips = [
-            { n: "VIP 1", p: 12400, l: 520.80 }, { n: "VIP 2", p: 45000, l: 1890.00 },
-            { n: "VIP 3", p: 100000, l: 4200.00 }, { n: "VIP 4", p: 250000, l: 10500.00 },
-            { n: "VIP 5", p: 500000, l: 21000.00 }, { n: "VIP 6", p: 1000000, l: 42000.00 }
+        const VIP_DATA = [
+            { id: 1, name: "VIP 1", price: 5000, income: 225 },
+            { id: 2, name: "VIP 2", price: 15000, income: 675 },
+            { id: 3, name: "VIP 3", price: 50000, income: 2250 },
+            { id: 4, name: "VIP 4", price: 100000, income: 4500 },
+            { id: 5, name: "VIP 5", price: 250000, income: 11250 },
+            { id: 6, name: "VIP 6", price: 500000, income: 22500 }
         ];
 
-        function notify(msg) {
-            const t = document.getElementById('toast');
-            t.querySelector('span').innerText = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
+        let user = null;
+        let authTab = 'login';
 
-        // --- AUTH ---
+        const savedPhone = localStorage.getItem('sk_logged_phone');
+        if(savedPhone) {
+            db.ref('users/' + savedPhone).once('value', snap => {
+                if(snap.exists()){ user = snap.val(); startApp(); }
+            });
+        }
+        renderVips();
+
         function handleAuth() {
-            const tel = document.getElementById('uTel').value.trim();
-            const pass = document.getElementById('uPass').value.trim();
-            if(!tel || !pass) return notify("⚠️ Preencha os campos!");
-            db.ref('contas/'+tel).once('value', s => {
-                if(authMode === "reg") {
-                    if(s.exists()) return notify("❌ Existe!");
-                    db.ref('contas/'+tel).set({ senha: pass, saldo: 1000, ativos: [] }).then(() => setAuth('login'));
+            const phone = document.getElementById('uPhone').value;
+            const pass = document.getElementById('uPass').value;
+            if(phone.length < 9) return showMsg("NÚMERO INVÁLIDO");
+
+            db.ref('users/' + phone).once('value', snap => {
+                if(authTab === 'reg') {
+                    if(snap.exists()) return showMsg("NÚMERO JÁ REGISTADO");
+                    user = { phone, pass, balance: 1000, vipPrice: 0, dailyIncome: 0, lastUpdate: Date.now(), isBanned: false, history: { "h0": {type:'Bónus Inicial', val:1000, date:new Date().toLocaleString(), status:'OK'} } };
+                    saveCloud(); startApp();
                 } else {
-                    const u = s.val();
-                    if(u && u.senha === pass) { meuTel = tel; entrarApp(); } 
-                    else notify("❌ Incorreto!");
+                    if(!snap.exists()) return showMsg("CONTA INEXISTENTE");
+                    const data = snap.val();
+                    if(data.isBanned) return showMsg("CONTA BLOQUEADA");
+                    if(data.pass !== pass) return showMsg("SENHA INCORRETA");
+                    user = data; startApp();
                 }
             });
         }
 
-        function entrarApp() {
-            db.ref('contas/'+meuTel).on('value', s => {
-                const u = s.val();
-                saldo = u.saldo || 0;
-                ativos = u.ativos || [];
-                document.getElementById('mainSaldo').innerText = saldo.toLocaleString('pt-AO') + " Kz";
-                document.getElementById('uID').innerText = "+244 " + meuTel;
-                processarRendimentosDiarios();
-            });
-            document.getElementById('authPage').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            renderVips();
-        }
-
-        // --- LÓGICA 00H00 ---
-        function processarRendimentosDiarios() {
-            if (ativos.length === 0) return;
-            const hoje = new Date(); hoje.setHours(0,0,0,0);
-            const hojeTs = hoje.getTime();
-            let ganhoTotal = 0, mudou = false;
-
-            const novos = ativos.map(a => {
-                let last = a.ultimaColeta || a.dataAtiv;
-                if (last < hojeTs) {
-                    const dias = Math.max(1, Math.floor((hojeTs - last) / 86400000));
-                    ganhoTotal += (a.l * dias);
-                    a.ultimaColeta = hojeTs;
-                    mudou = true;
+        function startApp() {
+            localStorage.setItem('sk_logged_phone', user.phone);
+            document.getElementById('authPage').classList.remove('active');
+            document.getElementById('dashPage').classList.add('active');
+            document.getElementById('refLinkText').innerText = `https://safekw.ao/reg?ref=${user.phone}`;
+            updateUI();
+            setInterval(() => {
+                if(user.dailyIncome > 0) {
+                    const now = Date.now();
+                    user.balance += (user.dailyIncome / 86400) * ((now - user.lastUpdate) / 1000);
+                    user.lastUpdate = now;
+                    document.getElementById('balanceDisp').innerText = user.balance.toLocaleString('pt-AO', {minimumFractionDigits: 2});
+                    if(Math.floor(now/1000) % 15 === 0) saveCloud();
                 }
-                return a;
-            });
-            if (mudou) db.ref('contas/'+meuTel).update({ saldo: saldo + ganhoTotal, ativos: novos });
+            }, 1000);
         }
 
-        // --- RECARGA (RESTAURADA) ---
-        function confirmarRecarga() {
-            const v = document.getElementById('vRec').value;
-            const f = document.getElementById('fInp').files[0];
-            if(!v || !f) return notify("⚠️ Preencha tudo!");
-            const r = new FileReader();
-            r.onload = e => {
-                db.ref('pendencias/recargas/'+Date.now()).set({ tel: meuTel, valor: parseFloat(v), foto: e.target.result })
-                .then(() => { notify("📩 Enviado!"); closeM(); });
+        // --- FUNÇÃO DE UPGRADE COM REEMBOLSO ---
+        function upgradeVip(id) {
+            const vip = VIP_DATA.find(v => v.id === id);
+            
+            // 1. Se o usuário já tiver um VIP, devolve o valor do VIP antigo para o saldo antes da nova compra
+            if (user.vipPrice > 0) {
+                user.balance += user.vipPrice;
+                showMsg(`REEMBOLSO DE ${user.vipPrice.toLocaleString()} Kz APLICADO!`, false);
+            }
+
+            // 2. Verifica se agora ele tem saldo suficiente para o novo VIP
+            if(user.balance < vip.price) {
+                // Se não tiver saldo após o reembolso, desfaz a adição do reembolso (opcional, mas seguro)
+                if(user.vipPrice > 0) user.balance -= user.vipPrice;
+                return showMsg("SALDO INSUFICIENTE PARA ESTE VIP");
+            }
+
+            // 3. Aplica a nova compra
+            user.balance -= vip.price; 
+            user.vipPrice = vip.price; 
+            user.dailyIncome = vip.income; 
+            user.lastUpdate = Date.now();
+
+            if(!user.history) user.history = {};
+            user.history["v"+Date.now()] = {type: `Upgrade ${vip.name}`, val: vip.price, date: new Date().toLocaleString(), status: 'ATIVO'};
+            
+            saveCloud(); 
+            updateUI(); 
+            showMsg(`UPGRADE PARA ${vip.name} CONCLUÍDO!`, false);
+        }
+
+        function handleDeposit() {
+            const v = parseFloat(document.getElementById('depAmount').value);
+            const file = document.getElementById('depFile').files[0];
+            if(isNaN(v) || v < 1000 || !file) return showMsg("DADOS EM FALTA");
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if(!user.history) user.history = {};
+                user.history["d"+Date.now()] = { type: 'Depósito', val: v, date: new Date().toLocaleString(), status: 'PENDENTE', proof: e.target.result };
+                saveCloud(); showMsg("ENVIADO!", false); nav('history');
             };
-            r.readAsDataURL(f);
+            reader.readAsDataURL(file);
         }
 
-        // --- SAQUE (RESTAURADA) ---
-        function execSacar() {
-            const v = parseFloat(document.getElementById('wVal').value);
-            const ib = document.getElementById('wIban').value.trim();
-            if(v < 1500 || v > saldo || !ib) return notify("❌ Inválido!");
-            const idS = Date.now();
-            const dados = { tel: meuTel, valorBruto: v, valor: v*0.9, iban: ib, status: "Pendente", data: new Date().toLocaleString() };
-            db.ref('contas/'+meuTel+'/saldo').set(saldo - v);
-            db.ref('pendencias/saques/'+idS).set(dados);
-            db.ref('contas/'+meuTel+'/historico_saques/'+idS).set(dados).then(() => {
-                notify("💸 Sucesso!"); renderHistSaques();
-            });
+        function handleWithdraw() {
+            const iban = document.getElementById('wIban').value;
+            const v = parseFloat(document.getElementById('wAmount').value);
+            if(iban.length < 21 || v < 1500 || v > user.balance) return showMsg("ERRO NOS DADOS");
+            user.balance -= v;
+            if(!user.history) user.history = {};
+            user.history["w"+Date.now()] = { type: 'Saque', val: v*0.9, bruto: v, date: new Date().toLocaleString(), status: 'PROCESSANDO', iban: iban };
+            saveCloud(); updateUI(); showMsg("SOLICITADO!", false); nav('history');
         }
 
-        function renderHistSaques() {
-            db.ref('contas/'+meuTel+'/historico_saques').on('value', snap => {
-                const div = document.getElementById('histS');
-                const d = snap.val();
-                if(!d) return div.innerHTML = "<p style='font-size:10px;'>Sem registos.</p>";
-                div.innerHTML = Object.values(d).reverse().map(s => `
-                    <div class="hist-item" style="border-left-color:${s.status==='Pendente'?'orange':'green'}">
-                        <strong>${s.valorBruto} Kz</strong> - <small>${s.status}</small><br>
-                        <span style="font-size:9px;">${s.data}</span>
-                    </div>`).join('');
-            });
+        function updateBank() {
+            const b = document.getElementById('bankChoice').value;
+            document.getElementById('bankDetails').classList.toggle('hidden', !b);
+            document.getElementById('ibanVal').innerText = b === 'BFA' ? '000600002870913430151' : '004000000927066710141';
         }
 
-        // --- COMPRA ---
-        function comprar(i) {
-            if(saldo >= vips[i].p) {
-                const hoje = new Date(); hoje.setHours(0,0,0,0);
-                ativos.push({ ...vips[i], dataAtiv: Date.now(), ultimaColeta: hoje.getTime() });
-                db.ref('contas/'+meuTel).update({ saldo: saldo - vips[i].p, ativos: ativos });
-                notify("✅ Ativado!");
-            } else notify("❌ Saldo!");
-        }
-
-        function renderVips() {
-            document.getElementById('vipGrid').innerHTML = vips.map((v, i) => `
-                <div class="vip-card">
-                    <div class="vip-badge">${v.n}</div>
-                    <strong>${v.p.toLocaleString()} Kz</strong>
-                    <div style="background:#f0f7ff; padding:5px; border-radius:8px; margin:10px 0;">
-                        <span style="color:green; font-weight:bold;">${v.l} Kz/dia</span>
-                    </div>
-                    <button class="btn-main" style="padding:10px; font-size:11px;" onclick="comprar(${i})">ATIVAR</button>
-                </div>`).join('');
-        }
-
-        function renderAssets() {
-            document.getElementById('listAssets').innerHTML = ativos.map(a => `
-                <div class="hist-item" style="border-left-color:green">
-                    <strong>${a.n}</strong><br>Recebe ${a.l} Kz diariamente às 00h00.
-                </div>`).join('') || "Sem ativos.";
-        }
-
-        function nav(p, e) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active-page'));
-            e.classList.add('active'); document.getElementById('p-' + p).classList.add('active-page');
-            if(p === 'assets') renderAssets();
-        }
-
-        function setAuth(m) {
-            authMode = m;
-            document.getElementById('btnT1').classList.toggle('active', m==='login');
-            document.getElementById('btnT2').classList.toggle('active', m==='reg');
-            document.getElementById('divRef').classList.toggle('hidden', m==='login');
-        }
-
-        function openM(id) { 
-            document.getElementById('m-' + id).style.display = 'flex'; 
-            if(id === 'withdraw') renderHistSaques();
-        }
-        function closeM() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-        function copiarLink() {
-            navigator.clipboard.writeText(window.location.href + "?ref=" + meuTel);
-            notify("🔗 Copiado!");
-        }
+        function saveCloud() { if(user) db.ref('users/' + user.phone).set(user); }
+        function logout() { localStorage.removeItem('sk_logged_phone'); location.reload(); }
+        function copyRefLink() { navigator.clipboard.writeText(document.getElementById('refLinkText').innerText).then(() => showMsg("COPIADO!", false)); }
+        function showMsg(txt, isErr = true) { const t = document.getElementById('toast'); t.innerText = txt; t.style.borderColor = isErr ? '#f00' : '#0052FF'; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 3000); }
+        function switchAuth(tab) { authTab = tab; const isL = tab === 'login'; document.getElementById('tabL').className = isL ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-white shadow-sm text-[#0052FF]" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-slate-400"; document.getElementById('tabR').className = !isL ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-white shadow-sm text-[#0052FF]" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-slate-400"; }
+        function calcW() { const v = parseFloat(document.getElementById('wAmount').value); const box = document.getElementById('feeBox'); if(v >= 1500) { box.classList.remove('hidden'); document.getElementById('taxVal').innerText = (v*0.1).toLocaleString() + " Kz"; document.getElementById('finalVal').innerText = (v*0.9).toLocaleString() + " Kz"; } else box.classList.add('hidden'); }
+        function nav(s) { ['vips','recharge','withdraw','history','team'].forEach(x => { const el = document.getElementById(x+'Sect'); if(el) el.classList.toggle('hidden', x !== s); }); if(s === 'history') updateHistoryUI(); toggleMenu(); }
+        function toggleMenu() { document.getElementById('drawer').classList.toggle('open'); document.getElementById('overlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none'; }
+        function updateUI() { if(!user) return; document.getElementById('balanceDisp').innerText = user.balance.toLocaleString('pt-AO', {minimumFractionDigits: 2}); const badge = document.getElementById('miningBadge'); badge.classList.toggle('hidden', user.dailyIncome <= 0); if(user.vipPrice > 0) document.getElementById('activeVipLabel').innerText = `VIP ${user.vipPrice.toLocaleString()} ATIVO`; }
+        function updateHistoryUI() { const list = user.history ? Object.values(user.history).reverse() : []; document.getElementById('historyList').innerHTML = list.map(h => `<div class="bg-white border p-5 rounded-3xl flex justify-between items-center italic"><div><p class="text-[10px] font-black uppercase">${h.type}</p><p class="text-[8px] font-bold text-slate-400">${h.date}</p></div><div class="text-right"><p class="font-black text-[#0052FF]">${h.val.toLocaleString()} Kz</p><p class="text-[8px] font-black uppercase text-emerald-500">${h.status}</p></div></div>`).join(''); }
+        function renderVips() { document.getElementById('vipGrid').innerHTML = VIP_DATA.map(v => `<div class="bg-white p-6 rounded-[35px] border-2 border-slate-50 flex items-center justify-between shadow-md"><div><h4 class="text-[9px] font-black uppercase text-slate-400 italic">${v.name}</h4><p class="text-xl font-black italic">${v.price.toLocaleString()} Kz</p><p class="text-[8px] font-black text-emerald-500 uppercase">+${v.income} Kz/dia</p></div><button onclick="upgradeVip(${v.id})" class="bg-black text-white px-7 py-4 rounded-2xl font-black text-[9px] uppercase italic">Ativar</button></div>`).join(''); }
     </script>
 </body>
-</html>
+                        </html>
