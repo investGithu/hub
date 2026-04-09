@@ -12,7 +12,8 @@
         .admin-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 1.5rem; }
         .user-row { transition: all 0.2s; border-bottom: 1px solid #1e293b; cursor: pointer; }
         .user-row:hover { background: #1e293b; }
-        .img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 12px; cursor: pointer; border: 2px solid #1e293b; }
+        /* Placeholder para carregar imagem rápido */
+        .img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 12px; cursor: pointer; border: 2px solid #1e293b; background: #1e293b; }
         input { background: #1e293b !important; border: 1px solid #334155 !important; color: white !important; }
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: #1e293b; border-left: 4px solid #f97316; padding: 16px 24px; border-radius: 12px; font-size: 12px; font-weight: bold; animation: slideIn 0.3s ease-out; }
@@ -69,9 +70,14 @@
 
     <div id="main-content" class="hidden">
         <header class="max-w-7xl mx-auto mb-8 flex justify-between items-center px-4">
-            <div>
-                <h1 class="text-3xl font-black text-orange-500 italic uppercase">Tesla Admin</h1>
-                <p id="stat-total" class="text-[10px] font-bold text-slate-500 uppercase mt-1">Sincronizando...</p>
+            <div class="flex items-center gap-6">
+                <div>
+                    <h1 class="text-3xl font-black text-orange-500 italic uppercase">Tesla Admin</h1>
+                    <p id="stat-total" class="text-[10px] font-bold text-slate-500 uppercase mt-1">Sincronizando...</p>
+                </div>
+                <button id="btn-cleanup" class="bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-500/30 px-4 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-broom"></i> Limpar Banco
+                </button>
             </div>
             <div class="relative w-80">
                 <input type="tel" id="search-input" placeholder="Pesquisar..." class="w-full pl-6 pr-4 py-4 rounded-2xl text-xs outline-none">
@@ -81,7 +87,7 @@
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 px-4">
             <div class="lg:col-span-8 space-y-6">
                 <div class="admin-card p-6">
-                    <h2 class="text-[10px] font-black uppercase text-orange-500 mb-4 tracking-widest">Pendentes</h2>
+                    <h2 class="text-[10px] font-black uppercase text-orange-500 mb-4 tracking-widest">Solicitações Pendentes</h2>
                     <div id="tx-list" class="space-y-4"></div>
                 </div>
             </div>
@@ -96,7 +102,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, get, update, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, get, update, onValue, remove, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC3SurEz7aLcHG4yBUq5zrGBPOb2mvLpZ4",
@@ -113,6 +119,13 @@
         let allUsers = {};
         let selectedUser = "";
 
+        window.validateAccess = () => {
+            if(document.getElementById("admin-key-input").value === "ABS..943") {
+                document.getElementById("lock-screen").style.display = "none";
+                document.getElementById("main-content").classList.remove("hidden");
+            } else showNotify("CHAVE INCORRETA", "#ef4444");
+        };
+
         window.showNotify = (msg, color = "#f97316") => {
             const container = document.getElementById("toast-container");
             const toast = document.createElement("div");
@@ -123,55 +136,30 @@
             setTimeout(() => toast.remove(), 4000);
         };
 
-        window.validateAccess = () => {
-            if(document.getElementById("admin-key-input").value === "ABS..943") {
-                document.getElementById("lock-screen").style.display = "none";
-                document.getElementById("main-content").classList.remove("hidden");
-            } else showNotify("CHAVE INCORRETA", "#ef4444");
+        window.openImg = (src) => {
+            document.getElementById("img-full").src = src;
+            document.getElementById("img-modal").style.display = "flex";
         };
 
-        // GESTÃO DE UTILIZADORES
-        onValue(ref(db, "users"), (snap) => {
-            if(snap.exists()) {
-                allUsers = snap.val();
-                renderUsers();
-                document.getElementById("stat-total").innerText = `Total: ${Object.keys(allUsers).length} utilizadores registrados`;
-            }
-        });
-
-        const renderUsers = (filter = "") => {
-            const list = document.getElementById("user-list");
-            list.innerHTML = "";
-            Object.keys(allUsers).forEach(phone => {
-                if(filter && !phone.includes(filter)) return;
-                const u = allUsers[phone];
-                const div = document.createElement("div");
-                div.className = "user-row p-4 rounded-xl flex justify-between items-center";
-                div.onclick = () => openUserModal(phone);
-                div.innerHTML = `
-                    <div><p class="text-[11px] font-black">${phone}</p><p class="text-[8px] text-slate-500 uppercase">${u.banned ? 'BLOQUEADO' : 'ATIVO'}</p></div>
-                    <p class="font-black text-orange-500 text-xs">${(u.balance || 0).toFixed(2)} Kz</p>
-                `;
-                list.appendChild(div);
-            });
-        };
+        window.closeUserModal = () => document.getElementById("user-modal").style.display = "none";
 
         window.openUserModal = (phone) => {
             selectedUser = phone;
             const u = allUsers[phone];
             const refs = Object.values(allUsers).filter(x => x.invitedBy === phone).length;
-            
             document.getElementById("m-user-phone").innerText = phone;
             document.getElementById("m-user-ref").innerText = `Convidados: ${refs} pessoas`;
             document.getElementById("m-new-pass").value = u.pass;
             document.getElementById("user-modal").style.display = "flex";
-            
             const btnBan = document.getElementById("btn-ban");
-            if(u.banned) { btnBan.innerText = "Desbloquear Conta"; btnBan.className = "w-full py-4 rounded-2xl font-black text-[10px] uppercase bg-emerald-600 text-white"; }
-            else { btnBan.innerText = "Bloquear Acesso"; btnBan.className = "w-full py-4 rounded-2xl font-black text-[10px] uppercase bg-zinc-800 text-zinc-400"; }
+            if(u.banned) { 
+                btnBan.innerText = "Desbloquear Conta"; 
+                btnBan.className = "w-full py-4 rounded-2xl font-black text-[10px] uppercase bg-emerald-600 text-white"; 
+            } else { 
+                btnBan.innerText = "Bloquear Acesso"; 
+                btnBan.className = "w-full py-4 rounded-2xl font-black text-[10px] uppercase bg-zinc-800 text-zinc-400"; 
+            }
         };
-
-        window.closeUserModal = () => document.getElementById("user-modal").style.display = "none";
 
         window.updateUserField = async (field) => {
             const val = document.getElementById("m-new-pass").value;
@@ -204,68 +192,109 @@
             }
         };
 
-        // GESTÃO DE TRANSAÇÕES
-        onValue(ref(db, "transactions"), (snap) => {
-            const box = document.getElementById("tx-list");
-            box.innerHTML = "";
-            if(snap.exists()){
-                const txs = snap.val();
-                Object.keys(txs).reverse().forEach(id => {
-                    const t = txs[id];
-                    if(t.status !== "PENDENTE") return;
-
-                    const card = document.createElement("div");
-                    card.className = "bg-slate-900 p-4 rounded-2xl border border-slate-800 flex justify-between items-center";
-                    
-                    if(t.tipo === "DEPÓSITO") {
-                        card.innerHTML = `
-                            <div class="flex items-center gap-4">
-                                <img src="${t.comprovante}" class="img-preview" onclick="openImg('${t.comprovante}')">
-                                <div><p class="text-[10px] font-black text-slate-500 uppercase">${t.user}</p><p class="text-xl font-black text-emerald-400">${t.valor.toFixed(2)} Kz</p></div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="processTx('${id}', '${t.user}', ${t.valor}, 'APROVADO', 'DEPÓSITO')" class="bg-emerald-600 px-4 py-3 rounded-xl text-[9px] font-black uppercase">Aprovar</button>
-                                <button onclick="processTx('${id}', '${t.user}', 0, 'RECUSADO', 'DEPÓSITO')" class="bg-slate-800 px-4 py-3 rounded-xl text-[9px] font-black uppercase text-red-500">Recusar</button>
-                            </div>
-                        `;
-                    } else {
-                        card.innerHTML = `
-                            <div>
-                                <p class="text-[10px] font-black text-slate-500 uppercase">${t.user}</p>
-                                <p class="text-xl font-black text-red-500">${t.valor.toFixed(2)} Kz</p>
-                                <div class="iban-badge mt-1"><i class="fa-solid fa-bank"></i> <span>${t.iban || 'SEM IBAN'}</span></div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="processTx('${id}', '${t.user}', 0, 'PAGO', 'SAQUE')" class="bg-white text-black px-4 py-3 rounded-xl text-[9px] font-black uppercase">Pagar</button>
-                                <button onclick="processTx('${id}', '${t.user}', ${t.valor}, 'RECUSADO', 'SAQUE')" class="bg-red-600/20 text-red-500 px-4 py-3 rounded-xl text-[9px] font-black uppercase">Devolver</button>
-                            </div>
-                        `;
-                    }
-                    box.appendChild(card);
-                });
-            }
-        });
-
-        window.openImg = (src) => {
-            document.getElementById("img-full").src = src;
-            document.getElementById("img-modal").style.display = "flex";
-        };
-
         window.processTx = async (id, phone, valor, status, tipo) => {
             const uRef = ref(db, `users/${phone}`);
             const txRef = ref(db, `transactions/${id}`);
             const uSnap = await get(uRef);
+            
             if(uSnap.exists()){
                 const currentBal = uSnap.val().balance || 0;
                 if(tipo === "DEPÓSITO" && status === "APROVADO") await update(uRef, { balance: currentBal + valor });
                 if(tipo === "SAQUE" && status === "RECUSADO") await update(uRef, { balance: currentBal + valor });
                 await update(txRef, { status: status });
-                showNotify("TRANSAÇÃO CONCLUÍDA");
+                showNotify(`${tipo} ${status}`);
             }
         };
 
-        document.getElementById("search-input").oninput = (e) => renderUsers(e.target.value.trim());
+        document.getElementById("btn-cleanup").onclick = async () => {
+            if(confirm("Deseja apagar transações concluídas?")) {
+                const snap = await get(ref(db, "transactions"));
+                if(snap.exists()){
+                    const data = snap.val();
+                    const updates = {};
+                    let c = 0;
+                    Object.keys(data).forEach(k => { if(data[k].status !== "PENDENTE") { updates[k] = null; c++; }});
+                    if(c > 0) { await update(ref(db, "transactions"), updates); showNotify(`${c} LIMPOS`); }
+                }
+            }
+        };
 
+        onValue(ref(db, "users"), (snap) => {
+            if(snap.exists()) {
+                allUsers = snap.val();
+                renderUsers();
+                document.getElementById("stat-total").innerText = `Total: ${Object.keys(allUsers).length} utilizadores`;
+            }
+        });
+
+        const renderUsers = (filter = "") => {
+            const list = document.getElementById("user-list");
+            list.innerHTML = "";
+            Object.keys(allUsers).sort().forEach(phone => {
+                if(filter && !phone.includes(filter)) return;
+                const u = allUsers[phone];
+                const div = document.createElement("div");
+                div.className = "user-row p-4 rounded-xl flex justify-between items-center";
+                div.onclick = () => openUserModal(phone);
+                div.innerHTML = `<div><p class="text-[11px] font-black">${phone}</p><p class="text-[8px] text-slate-500 uppercase">${u.banned?'BLOQUEADO':'ATIVO'}</p></div><p class="font-black text-orange-500 text-xs">${(u.balance||0).toFixed(2)} Kz</p>`;
+                list.appendChild(div);
+            });
+        };
+
+        // OTIMIZAÇÃO: Escuta apenas as últimas 50 transações para evitar lentidão
+        const txQuery = query(ref(db, "transactions"), limitToLast(50));
+        
+        onValue(txQuery, (snap) => {
+            const box = document.getElementById("tx-list");
+            box.innerHTML = "";
+            if(snap.exists()){
+                const txs = snap.val();
+                // Reverter para mostrar os mais novos primeiro
+                Object.keys(txs).reverse().forEach(id => {
+                    const t = txs[id];
+                    if(t.status !== "PENDENTE") return;
+                    
+                    const card = document.createElement("div");
+                    card.className = "bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row justify-between items-center mb-4 gap-4 animate-pulse";
+                    
+                    // Remover animação de pulso após meio segundo para dar sensação de velocidade
+                    setTimeout(() => card.classList.remove('animate-pulse'), 500);
+
+                    if(t.tipo === "DEPÓSITO") {
+                        card.innerHTML = `
+                            <div class="flex items-center gap-4 w-full">
+                                <img src="${t.comprovante}" class="img-preview" loading="lazy" onclick="openImg('${t.comprovante}')">
+                                <div>
+                                    <p class="text-[10px] font-black text-slate-500 uppercase">DEPÓSITO: ${t.user}</p>
+                                    <p class="text-xl font-black text-emerald-400">${t.valor.toFixed(2)} Kz</p>
+                                    <p class="text-[8px] text-slate-600">${t.data}</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 w-full md:w-auto">
+                                <button onclick="processTx('${id}', '${t.user}', ${t.valor}, 'APROVADO', 'DEPÓSITO')" class="flex-1 md:flex-none bg-emerald-600 px-6 py-3 rounded-xl text-[9px] font-black uppercase text-white">Aprovar</button>
+                                <button onclick="processTx('${id}', '${t.user}', 0, 'RECUSADO', 'DEPÓSITO')" class="flex-1 md:flex-none bg-slate-800 px-6 py-3 rounded-xl text-[9px] font-black uppercase text-red-500">Recusar</button>
+                            </div>`;
+                    } else {
+                        card.innerHTML = `
+                            <div class="w-full">
+                                <p class="text-[10px] font-black text-slate-500 uppercase">SAQUE: ${t.user}</p>
+                                <p class="text-xl font-black text-red-500">${t.valor.toFixed(2)} Kz</p>
+                                <div class="iban-badge mt-2"><i class="fa-solid fa-bank"></i> <span>IBAN: ${t.iban || 'NÃO INFORMADO'}</span></div>
+                                <p class="text-[8px] text-slate-600 mt-1">${t.data}</p>
+                            </div>
+                            <div class="flex gap-2 w-full md:w-auto">
+                                <button onclick="processTx('${id}', '${t.user}', 0, 'PAGO', 'SAQUE')" class="flex-1 md:flex-none bg-white text-black px-6 py-3 rounded-xl text-[9px] font-black uppercase">Marcar Pago</button>
+                                <button onclick="processTx('${id}', '${t.user}', ${t.valor}, 'RECUSADO', 'SAQUE')" class="flex-1 md:flex-none bg-red-600/20 text-red-500 px-6 py-3 rounded-xl text-[9px] font-black uppercase">Recusar</button>
+                            </div>`;
+                    }
+                    box.appendChild(card);
+                });
+            } else {
+                box.innerHTML = `<p class="text-center text-slate-600 text-[10px] py-10">NENHUMA SOLICITAÇÃO PENDENTE</p>`;
+            }
+        });
+
+        document.getElementById("search-input").oninput = (e) => renderUsers(e.target.value.trim());
     </script>
 </body>
 </html>
